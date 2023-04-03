@@ -1,0 +1,60 @@
+1. Überprüfen mit einer Maske
+if (befehl && 0x3F00) == Ox3000 : MOVLW()
+if (Befehl && 0x3F00) == 0x3E00 : ADDLW()
+
+if (befehl && 0x3F00) == 0x0700 : ADDWF
+
+2. Methoden für jeden Befehl
+Movlw() {
+	ergebniss = Befehl && 0x00FF (argument isolieren!, in dem fall die letzten zwei bits)
+	UReg = ergebniss
+}
+
+
+ADDLW() {
+ergebniss = Befehl && 0x00FF
+Ergebniss = Ergebniss + WReg
+if Ergebnis == 0 -> Z-Flag setzen
+	else -> Z-Flag reset
+
+if Ergebnis > 255 -> Setze Carry
+	else -> reset carry
+
+Temp1 = Befehl && 0x000F
+Temp1 = Temp1 + (WReg && 0x0F)
+if (Temp1 > 15 -> Set DC)
+	else -> res DC
+}
+
+
+ADDWF() {
+FReg = Befehl && 0x007F
+DBit = Befehl && 0x0080
+if FReg == 0 -> FReg = FSR (dann indirekte addressierung -> proz. nimmt inhalt vom fsr register) 
+
+Erg = W-Reg + Datenspeicher [FReg] 
+wie oben:
+C
+DC
+Z
+if DBit = 0 -> WReg = Erg
+	else -> Datenspeicher[FReg] = Erg
+}
+
+
+
+Übung:
+ANDLOW
+
+1. Überprüfen mit der Maske:
+if (befehl && 0x3F00) == 0x3900 -> ANDLW()
+
+2. Methode für ANDLOW:
+ANDLW() {
+Erg = Befehl && 0x00FF
+Erg = Erg && W-Reg
+Z-Flag
+
+
+}
+
