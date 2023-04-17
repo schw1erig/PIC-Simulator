@@ -1,8 +1,5 @@
 #pragma once
 
-//#include "befehle.h"
-//#include "Form1.h"
-
 using namespace System;
 using namespace System::Windows::Forms;
 

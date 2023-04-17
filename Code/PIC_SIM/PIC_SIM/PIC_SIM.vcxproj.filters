@@ -26,13 +26,16 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Form1.h">
+    <ClInclude Include="PIC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="befehle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

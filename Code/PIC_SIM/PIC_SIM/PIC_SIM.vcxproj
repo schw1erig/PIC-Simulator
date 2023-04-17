@@ -131,7 +131,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="befehle.h" />
-    <ClInclude Include="Form1.h">
+    <ClInclude Include="Header.h" />
+    <ClInclude Include="PIC.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="GUI.h" />
@@ -160,8 +161,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.h</DependentUpon>
+    <EmbeddedResource Include="PIC.resx">
+      <DependentUpon>PIC.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
