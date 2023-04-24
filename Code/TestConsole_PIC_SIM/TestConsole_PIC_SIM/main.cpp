@@ -55,11 +55,10 @@ int main()
         string sBefehl = "";
         int iBefehl = 0;
 
-        if (prog[zeile][0] == ' ') zeile++;
+        if (prog[zeile][0] != '0') zeile++;
         else {
             // Zeilenummer aus ersten 4 Zeichen ermitteln
             for(int i = 0; i < 4; i++) {
-                
                 sZeiger = sZeiger + prog[zeile][i];
                 cout << "Zeiger schleife: " << sZeiger << "\n";
             }
