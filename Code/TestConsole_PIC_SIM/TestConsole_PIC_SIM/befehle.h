@@ -5,13 +5,6 @@
 //using namespace System::Windows::Forms;
 
 
-
-int add(int x, int y) {
-
-	return x+y;
-
-}
-
 int aus = 0;
 
 void decode() {
@@ -25,9 +18,6 @@ void decode() {
 	default:
 		break;
 	}
-
-
-
 } 
 
 

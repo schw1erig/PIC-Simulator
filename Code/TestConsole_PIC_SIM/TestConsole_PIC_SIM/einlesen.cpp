@@ -1,25 +1,32 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
 string file = "D:\GitHub\PIC-Simulator\TestProg_PicSim_20210420\TPicSim1.LST";
 
-void inlesen() {
-	ifstream infile(file);
+void einlesen(string filename, string prog[]) {
 
-
-
-    string line;
-    while (std::getline(infile, line))
-    {
-        std::istringstream iss(line);
-        int a, b;
-        if (!(iss >> a >> b)) { break; } // error
-
-        // process pair (a,b)
+    ifstream file(filename);
+    int counter = 0;
+    if (file.is_open()) {
+        string line;
+        while (std::getline(file, line)) {
+            //cout << line << "\n";
+            prog[counter] = line;
+            counter++;
+        }
+        file.close();
     }
-	
-
 }
+
+void fileAusgeben(string prog[]) {
+    for (int i = 0; i < 1000; i++) {
+        if (prog[i] != "no") {
+            cout << prog[i] << "\n";
+        }
+    }
+}
+
