@@ -40,28 +40,37 @@ int main()
     }
 
     //Pfad für die Datei festlegen
-    string filename = "D:/GitHub/PIC-Simulator/TestProg_PicSim_20210420/TPicSim1.LST";
+    string filename = "D:/GitHub/PIC-Simulator/TestProg_PicSim_20210420/TPicSim2.LST";
     //Datei einlesen
     einlesen(filename, prog);
     //Eingelesene Datei ausgeben
     fileAusgeben(prog);
 
-
+    // Befehle extrahieren
+    // noch fehlend: Array, welches nummer derbefehle auf tatsächliche zeile im programm mappt
     int zeile = 0;
-    
-    while (prog[zeile][0] != 'n') {
-        string sZeiger = "";
-        int iZeiger = 0;
-        string sBefehl = "";
-        int iBefehl = 0;
+    string sZeiger;
+    int iZeiger;
+    string sBefehl;
+    int iBefehl;
+    while (prog[zeile] != "no") {
+        
+        sZeiger = "";
+        sBefehl = "";
 
-        if (prog[zeile][0] != '0') zeile++;
+        cout << "Zu behandelnde Zeile: " << zeile + 1 << "\n";
+        cout << "Erstes Zeichen : " << prog[zeile][0] << ";\n";
+        if (prog[zeile][0] != '0') {
+            cout << "Befehl Not found\n";
+        }
         else {
+            cout << "Befehl Found\n";
             // Zeilenummer aus ersten 4 Zeichen ermitteln
             for(int i = 0; i < 4; i++) {
                 sZeiger = sZeiger + prog[zeile][i];
                 cout << "Zeiger schleife: " << sZeiger << "\n";
             }
+            // Zeilennummer in int umwandeln
             iZeiger = stoi(sZeiger);
             cout << "int zeiger: " << iZeiger << "\n";
             cout << "zeiger: " << iZeiger << "\n";
@@ -77,11 +86,10 @@ int main()
             //Speichern im Programspeicher
             progSpeicher[iZeiger] = iBefehl;
             cout << "im Progspeicher: " << progSpeicher[iZeiger] << "\n";
-
         }
+        // Nach abarbeitung oder ignorieren Zeilennummer erhöhen
         zeile++;
-        cout << "\n\n";
+        cout << "\n";
     }
-   
     return 0;
 }
