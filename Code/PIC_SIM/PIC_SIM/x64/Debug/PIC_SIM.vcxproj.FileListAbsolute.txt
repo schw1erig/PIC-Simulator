@@ -1,4 +1,0 @@
-D:\GitHub\PIC-Simulator\Code\PIC_SIM\PIC_SIM\x64\Debug\PIC_SIM.vcxproj.AssemblyReference.cache
-D:\GitHub\PIC-Simulator\Code\PIC_SIM\PIC_SIM\x64\Debug\PIC_SIM.vcxproj.SuggestedBindingRedirects.cache
-D:\GitHub\PIC-Simulator\Code\PIC_SIM\PIC_SIM\x64\Debug\PIC_SIM.vcxproj.GenerateResource.cache
-D:\GitHub\PIC-Simulator\Code\PIC_SIM\PIC_SIM\x64\Debug\PIC_SIM.PIC.resources
