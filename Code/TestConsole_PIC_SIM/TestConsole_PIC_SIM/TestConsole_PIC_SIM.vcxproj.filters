@@ -29,5 +29,8 @@
     <ClInclude Include="einlesen.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

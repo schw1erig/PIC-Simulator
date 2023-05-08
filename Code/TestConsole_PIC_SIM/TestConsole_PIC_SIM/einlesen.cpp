@@ -2,12 +2,11 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include "common.h"
 
 using namespace std;
 
-string file = "D:\GitHub\PIC-Simulator\TestProg_PicSim_20210420\TPicSim1.LST";
-
-void einlesen(string filename, string prog[]) {
+void einlesen(string filename) {
 
     // Eingabe array mit default wert füllen
     for (int i = 0; i < 1000; i++) {
@@ -27,7 +26,7 @@ void einlesen(string filename, string prog[]) {
     }
 }
 
-void fileAusgeben(string prog[]) {
+void fileAusgeben() {
     for (int i = 0; i < 1000; i++) {
         if (prog[i] != "no") {
             cout << prog[i] << "\n";
@@ -35,7 +34,7 @@ void fileAusgeben(string prog[]) {
     }
 }
 
-void extractBefehle(string prog[], int progSpeicher[], int matchZeile[]) {
+void extractBefehle() {
 
     // Befehle extrahieren
 // noch fehlend: Array, welches nummer derbefehle auf tatsächliche zeile im programm mappt
@@ -114,6 +113,4 @@ void extractBefehle(string prog[], int progSpeicher[], int matchZeile[]) {
         zeile++;
         cout << "\n";
     }
-
-
 }
