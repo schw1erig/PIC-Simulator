@@ -4,16 +4,6 @@
 //using namespace System;
 //using namespace System::Windows::Forms;
 
-
-
-int add(int x, int y) {
-
-	return x + y;
-
-}
-
-int aus = 0;
-
 /*
 //Befehl-Decode
 //derzeit auskommentiert wegen fehlender funktionen
@@ -105,7 +95,74 @@ int getAus() {
 	return aus;
 }
 
+int add(int x, int y) {
+
+	return x + y;
+
+}
+
+int aus = 0;
 
 
+/* void addlw(int data){
+	uint8_t wReg;
+	uint8_t k = 0x00ff & data;
+	w += k;
+}
 
+void andlw(int data){
+	uint8_t wReg;
+	uint8_t k = 0x00ff & data;
+	w &= k;
+}
+
+void addwf(int data){
+	uint8_t d = 0x0080 & data;
+	uint8_t f = 0x007f & data;
+	dataSpeicher
+    if(d == 0)   // Wenn d = 0, wird das Ergebnis in das Register geschrieben
+    {
+		int c;
+		int z;
+		int n;
+        int result = wReg + reg;   // Addiert den Wert in WREG mit dem Wert im Register
+        c = (result < wReg || result < reg);   // Setzt das Carry-Flag basierend auf dem Ergebnis
+        z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+        n = (result >> 7) & 1;   // Setzt das Negative-Flag basierend auf dem Ergebnis
+        reg = result;   // Speichert das Ergebnis im Register
+    }
+    else   // Wenn d = 1, wird das Ergebnis in WREG geschrieben
+    {
+        wReg = wReg + reg;   // Addiert den Wert in WREG mit dem Wert im Register
+        c = (wReg < reg);   // Setzt das Carry-Flag basierend auf dem Ergebnis
+        z = (wReg == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+        n = (wReg >> 7) & 1;   // Setzt das Negative-Flag basierend auf dem Ergebnis
+    }
+}
+
+void andwf(int data)
+{
+    if(d == 0)   // Wenn d = 0, wird das Ergebnis in das Register geschrieben
+    {
+		int z;
+		int n;
+        int result = wReg & reg;   // Führt die logische AND-Operation zwischen WREG und dem Register aus
+        z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+        n = (result >> 7) & 1;   // Setzt das Negative-Flag basierend auf dem Ergebnis
+        reg = result;   // Speichert das Ergebnis im Register
+    }
+    else   // Wenn d = 1, wird das Ergebnis in WREG geschrieben
+    {
+        wReg = wReg & reg;   // Führt die logische AND-Operation zwischen WREG und dem Register aus
+        z = (wReg == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+        n = (wReg >> 7) & 1;   // Setzt das Negative-Flag basierend auf dem Ergebnis
+    }
+}
+
+void bcf(uint8_t reg)
+{
+
+    reg &= ~(1 << bit);   // Löscht das Bit mit der Position bit im Register
+}
+*/
 
