@@ -1,0 +1,28 @@
+1000 0001 - 129 
+1000 0000 - 128
+
+1000 0000 - 128
+
+if(128)
+zahl - 128 = 1 (0000 00001)
+else (0)
+zahl + 128 
+
+-----------------------
+Wann sind uint_8t - bitweise integer, wann sinnvoll
+
+{1,1,1,1,1,1,1,1} {1,1,1,1,1,1,1,1} ...
+
+speicher[1][3]
+
+doch int 
+
+int bei rechnungen, uint8_t bei bitänderungen 
+
+W register, wo?
+
+
+Weitere Notes: 
+AND und OR zum manipulieren
+
+Datenbänke als 2 dim array: Bsp : bank[0][120] , Bank 0, Register 120
