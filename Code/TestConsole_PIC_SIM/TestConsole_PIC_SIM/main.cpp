@@ -31,6 +31,7 @@ int progZeiger;
 
 int quarzTakt;  // in MHZ
 int progTime; // in Micro-Sekunden
+int takte = 0;
 
 int main()
 {
@@ -65,6 +66,8 @@ int main()
     testSetStatus();
     
     testAddwf();
+
+    cout << "Test: " << (5 > 0);
 
     return 0;
 }

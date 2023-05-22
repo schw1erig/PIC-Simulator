@@ -16,15 +16,15 @@ void testSetStatus() {
 
 void testAddwf() {
     // Test von addwf
-    wReg = 255;
-    dataSpeicher[0][1] = 2;
+    wReg = 254;
+    dataSpeicher[0][1] = 3;
 
-    cout << "Addwf Debug:" << "\nwReg: " << (int)wReg << "\nFReg: " << (int)dataSpeicher[0][1];
+    cout << "Addwf Debug: 254 + 3 = 2 (FReg), c = 1" << "\nwReg: " << (int)wReg << "\nFReg: " << (int)dataSpeicher[0][1];
 
     addwf(0x0001);
 
     cout << "\nErgebnisse:";
     cout << "\nstatus reg: " << (int)dataSpeicher[0][3];
     cout << "\nwRegErg : " << (int)wReg;
-    cout << "\nFRegErg: " << (int)dataSpeicher[0][1] << "\nC: " << (getC() > 0) << "\nDC: " << (getDC() > 0) << "\nZ: " << (getZ() < 0) << "\n";
+    cout << "\nFRegErg: " << (int)dataSpeicher[0][1] << "\nC: " << getC() << "\nDC: " << getDC() << "\nZ: " << getZ() << "\n";
 }
