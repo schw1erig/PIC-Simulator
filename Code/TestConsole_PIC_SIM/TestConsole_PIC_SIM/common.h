@@ -29,3 +29,4 @@ extern uint8_t maskeIRP;
 extern int progZeiger;
 extern int quarzTakt;
 extern int progTime;
+extern int takte;

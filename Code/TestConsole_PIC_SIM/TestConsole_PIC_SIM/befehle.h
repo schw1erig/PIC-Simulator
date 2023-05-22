@@ -37,15 +37,18 @@ void decode(data);
 */
 
 
-int addlw(int data);
 
-int andlw(int data);
 
-int addwf(int data);
+void addwf(int data);
 
 void andwf(int data);
 
+void addlw(int data);
+
+void andlw(int data);
+
 void bcf(uint8_t reg);
 
+void nop();
 
 void execBefehl();
