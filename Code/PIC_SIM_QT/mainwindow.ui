@@ -1123,7 +1123,7 @@
       <string>1.000µs</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_40">
+    <widget class="QLabel" name="quarzfrequenz_Label">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1175,7 +1175,7 @@
       <string>Zurücksetzen</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_42">
+    <widget class="QLabel" name="laufzeit_Label">
      <property name="geometry">
       <rect>
        <x>50</x>
@@ -1272,7 +1272,7 @@
        <x>10</x>
        <y>20</y>
        <width>501</width>
-       <height>261</height>
+       <height>291</height>
       </rect>
      </property>
      <property name="widgetResizable">
@@ -1284,16 +1284,16 @@
         <x>0</x>
         <y>0</y>
         <width>499</width>
-        <height>259</height>
+        <height>289</height>
        </rect>
       </property>
       <widget class="QPlainTextEdit" name="Console_Field">
        <property name="geometry">
         <rect>
          <x>3</x>
-         <y>0</y>
+         <y>10</y>
          <width>491</width>
-         <height>251</height>
+         <height>271</height>
         </rect>
        </property>
        <property name="plainText">
@@ -1540,7 +1540,7 @@ d
      </property>
     </item>
    </widget>
-   <widget class="QTableWidget" name="tableWidget">
+   <widget class="QTableWidget" name="pin_table">
     <property name="geometry">
      <rect>
       <x>350</x>
@@ -1750,6 +1750,46 @@ d
       <string>i</string>
      </property>
     </item>
+    <item row="2" column="0">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="1">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="2">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="3">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="4">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="5">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="6">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="2" column="7">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
     <item row="3" column="0">
      <property name="text">
       <string>7</string>
@@ -1830,6 +1870,46 @@ d
       <string>i</string>
      </property>
     </item>
+    <item row="5" column="0">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="1">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="2">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="3">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="4">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="5">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="6">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="5" column="7">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
     <item row="6" column="0">
      <property name="text">
       <string>7</string>
@@ -1872,42 +1952,82 @@ d
     </item>
     <item row="7" column="0">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="1">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="2">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="3">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="4">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="5">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="6">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="7" column="7">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
+     </property>
+    </item>
+    <item row="8" column="0">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="1">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="2">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="3">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="4">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="5">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="6">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="8" column="7">
+     <property name="text">
+      <string>0</string>
      </property>
     </item>
     <item row="9" column="0">
@@ -1952,42 +2072,82 @@ d
     </item>
     <item row="10" column="0">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="1">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="2">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="3">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="4">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="5">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="6">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="10" column="7">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
+     </property>
+    </item>
+    <item row="11" column="0">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="1">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="2">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="3">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="4">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="5">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="6">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="11" column="7">
+     <property name="text">
+      <string>0</string>
      </property>
     </item>
     <item row="12" column="0">
@@ -2032,42 +2192,82 @@ d
     </item>
     <item row="13" column="0">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="1">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="2">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="3">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="4">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="5">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="6">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
      </property>
     </item>
     <item row="13" column="7">
      <property name="text">
-      <string>i</string>
+      <string>o</string>
+     </property>
+    </item>
+    <item row="14" column="0">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="1">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="2">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="3">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="4">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="5">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="6">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </item>
+    <item row="14" column="7">
+     <property name="text">
+      <string>0</string>
      </property>
     </item>
    </widget>
