@@ -15,6 +15,21 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_toolButton_toggled(bool checked);
+
+    void on_pushButton_5_toggled(bool checked);
+
+    void on_test_clicked(bool checked);
+
+    void on_test_stateChanged(int arg1);
+
+    void on_pushButton_5_clicked();
+
+    void on_test_clicked();
+
+    void on_Console_Field_blockCountChanged(int newBlockCount);
+
 private:
     Ui::MainWindow *ui;
 };
