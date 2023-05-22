@@ -21,6 +21,12 @@
     <ClCompile Include="einlesen.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="befehle.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="befehle.h">
@@ -30,6 +36,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

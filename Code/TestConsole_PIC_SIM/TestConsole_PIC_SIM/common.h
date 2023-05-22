@@ -1,12 +1,14 @@
+#include <iostream>
+#include "befehle.h"
+#include "einlesen.h"
+#include "test.h"
 
 using namespace std;
 
 // Programmspeicher
 extern int progSpeicher[1024];
 // Ram 1
-extern uint8_t dataSpeicher0[128];
-// Ram 2
-extern uint8_t dataSpeicher1[128];
+extern uint8_t dataSpeicher[2][128];
 // Stack
 extern int stack[8];
 // Speicher für das gesamte Program
@@ -23,3 +25,7 @@ extern uint8_t maskePD;
 extern uint8_t maskeTO;
 extern uint8_t maskeRP0;
 extern uint8_t maskeIRP;
+
+extern int progZeiger;
+extern int quarzTakt;
+extern int progTime;
