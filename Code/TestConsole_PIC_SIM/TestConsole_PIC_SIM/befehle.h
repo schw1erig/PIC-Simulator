@@ -52,3 +52,5 @@ void bcf(uint8_t reg);
 void nop();
 
 void execBefehl();
+
+int popStack();

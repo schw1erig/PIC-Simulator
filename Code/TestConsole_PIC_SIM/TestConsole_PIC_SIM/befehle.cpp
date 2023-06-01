@@ -265,7 +265,7 @@ void andwf(int data)
 
 void clrf(int data) {
 
-	int takte = 4;
+	takte += 4;
 
 	uint8_t f = (data & 0x7f);
 	int z = 1;
@@ -288,7 +288,7 @@ void clrw(int data) {
 
 void comf(int data) {
 
-	int takte = 4;
+	takte += 4;
 
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
@@ -691,6 +691,47 @@ void bsf(int data) {
 	takte += 4;
 }
 
+void btfsc(int data) {
+
+	uint8_t f = 0x007f & data; // Register Pfad
+	uint8_t b = 0x0380 & data;
+	uint8_t reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+
+	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
+	
+	if ((f & b) > 0) {
+		// bit b in f = 1 -> do nothing + next befehl
+	}
+	else {
+		// bit b i nf = 0, führe nop() aus und überspringe den nächsten befehl
+		nop();
+		progZeiger++;
+	}
+
+	takte += 4;
+	
+}
+
+void btfss(int data) {
+
+	uint8_t f = 0x007f & data; // Register Pfad
+	uint8_t b = 0x0380 & data;
+	uint8_t reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+
+	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
+
+	if ((f & b) == 0) {
+		// bit b in f = 0-> do nothing + next befehl
+	}
+	else {
+		// bit b in f = 1, führe nop() aus und überspringe den nächsten befehl
+		nop();
+		progZeiger++;
+	}
+
+	takte += 4;
+
+}
 
 
 
@@ -699,7 +740,7 @@ void bsf(int data) {
 void addlw(int data) {
 	// Add literal and W
 	uint8_t k = 0x00ff & data;
-	wReg += k;
+	
 
 	int c = 0;
 	int z = 0;
@@ -714,7 +755,7 @@ void addlw(int data) {
 	}
 
 	// Berechnung
-	result = wReg + k;   // Addiert den Wert in WREG mit dem Wert im Register
+	result = (int) wReg + (int) k;   // Addiert den Wert in WREG mit dem Wert im Register
 
 	// Flags festlegen
 	if (result > 255) {
@@ -722,12 +763,14 @@ void addlw(int data) {
 		c = 1;
 		result -= 255;
 	}
+
 	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
-	// Speicherort ermittlen
+	// Schreibe in W reg
 
 	wReg = (uint8_t)result;
 
+	// Setze flags
 	setC(c);
 	setDC(dc);
 	setZ(z);
@@ -737,24 +780,164 @@ void addlw(int data) {
 }
 
 
-
-/*
-int andlw(int data){
-	uint8_t k = 0x00ff & data;
-	wReg &= k;
-
-	// return der benötigten takte
-	return 4;
-}
-
-
-void bcf(uint8_t reg)
+void andlw(int data)
 {
 
-	reg &= ~(1 << bit);   // Löscht das Bit mit der Position bit im Register
-}
-*/
+	
+	int z = 0;
+	uint8_t result;
 
+	uint8_t k = 0x00ff & data; // Register Pfad
+
+	result = wReg & k;   // Führt die logische AND-Operation zwischen WREG und k aus
+	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+
+	// Schreibe Ergebniss in das wReg
+	wReg = result;
+
+	// Setze Flags
+	setZ(z);
+
+	// Erhöhe Takte
+	takte += 4; // standard für benötigte Takte 
+}
+
+void call(int data) {
+
+	stack[stackZeiger] = progSpeicher[progZeiger + 1];
+
+	/*
+	Call Subroutine. First, return address
+	(PC+1) is pushed onto the stack. The
+	eleven bit immediate address is loaded
+	into PC bits <10:0>. The upper bits of
+	the PC are loaded from PCLATH. CALL
+	is a two cycle instruction.
+	*/
+
+	takte += 8;
+
+}
+
+void clrwdt(int data) {
+
+	/*
+	CLRWDT instruction resets the Watchdog
+	Timer. It also resets the prescaler
+	of the WDT. Status bits TO and PD are
+	set.
+	*/
+	
+	// wdt = 0;
+	// wdtPre = 0;
+
+	setTO(1);
+	setPD(1);
+
+}
+
+void goTo(int data) {
+	/*
+	GOTO is an unconditional branch. The
+	eleven bit immediate value is loaded
+	into PC bits <10:0>. The upper bits of
+	PC are loaded from PCLATH<4:3>.
+	GOTO is a two cycle instruction.
+	*/
+
+	int k = data & 0x07ff;
+
+
+	progZeiger = 0;
+	progZeiger |= k;
+
+	progZeiger |= ((pcl & 0x18) < 8);
+
+	takte += 8;
+
+}
+
+
+void iorlw(int data) {
+	
+	/*
+	The contents of the W register is
+	OR’ed with the eight bit literal 'k'. The
+	result is placed in the W register.
+	*/
+	
+	uint8_t k = 0x00ff & data; // Literal k Pfad
+
+	// Führe verorderung durch
+	uint8_t result = wReg | k;
+
+	// Bestimme z auf basis des ergebniss 
+	int z = (result == 0);
+
+	// Schreibe in wReg
+	wReg = result;
+	
+	// Setze Flags
+	setZ(z);
+
+	// Erhöhe Takte
+	takte += 4;
+
+}
+
+void movlw(int data) {
+	// The eight bit literal ’k’ is loaded into W register.The don’t cares will assemble as 0’s.
+	
+	uint8_t k = 0xff & data; // Register Pfad
+
+	// kopiere k zu wReg
+	wReg = k;
+
+	takte += 4;
+
+}
+
+void retfie(int data) {
+
+	progZeiger = popStack();
+	
+	gie = 1;
+
+	takte += 8;
+}
+
+void retlw(int data) {
+
+	/*
+		The W register is loaded with the eight
+		bit literal ’k’. The program counter is
+		loaded from the top of the stack (the
+		return address). This is a two cycle
+		instruction.
+	*/
+
+	uint8_t k = data % 0xff;
+
+	wReg = k;
+
+	progZeiger = popStack();
+
+	takte += 8;
+}
+
+void pic_return(int data) {
+
+	/*
+		Return from subroutine. The stack is
+		POPed and the top of the stack (TOS)
+		is loaded into the program counter. This
+		is a two cycle instruction.
+	*/
+
+	progZeiger = popStack();
+
+	takte += 8;
+}
 
 
 void execBefehl() {
@@ -770,5 +953,20 @@ void execBefehl() {
 
 	// GUI aktualisieren
 	// refreshGUI();
+
+}
+
+int popStack() {
+
+	int top = stack[0];
+	
+	for (int i = 0; i < 7; i++) {	
+		stack[i + 1] = stack[i];
+
+	}
+
+	stack[7] = 0;
+	
+	return top;
 
 }

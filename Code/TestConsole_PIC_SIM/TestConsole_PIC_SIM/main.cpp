@@ -18,6 +18,9 @@ string prog[1000];
 int matchZeile[1024];
 
 uint8_t wReg = 0;
+int pcl = 0;
+int gie = 0;
+
 
 uint8_t maskeC;
 uint8_t maskeDC;
@@ -27,10 +30,11 @@ uint8_t maskeTO;
 uint8_t maskeRP0;
 uint8_t maskeIRP;
 
-int progZeiger;
+int progZeiger = 0;
+int stackZeiger = 0;
 
-int quarzTakt;  // in MHZ
-int progTime; // in Micro-Sekunden
+int quarzTakt = 4;  // in MHZ
+int progTime = 0; // in Micro-Sekunden
 int takte = 0;
 
 int main()
@@ -42,11 +46,6 @@ int main()
     maskeTO = 0x0010;
     maskeRP0 = 0x0020;
     maskeIRP = 0x0080;
-
-    progZeiger = 0;
-
-    quarzTakt = 4;
-    progTime = 0;
 
     // init dataSpeicher
     for (int i = 0; i < 127; i++) {
