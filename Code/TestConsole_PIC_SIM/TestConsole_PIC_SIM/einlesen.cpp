@@ -9,7 +9,7 @@ using namespace std;
 void einlesen(string filename) {
 
     // Eingabe array mit default wert füllen
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1024; i++) {
         prog[i] = "no";
     }
 
@@ -27,7 +27,7 @@ void einlesen(string filename) {
 }
 
 void fileAusgeben() {
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1024; i++) {
         if (prog[i] != "no") {
             cout << prog[i] << "\n";
         }
@@ -48,8 +48,9 @@ void extractBefehle() {
     int iGlobZeiger;
 
     // ProgSpeicher array mit default wert füllen
+    // init progSpeicher mit -1 um eindeutig zu erkenn en welche fleder leer sind
     for (int i = 0; i < 1024; i++) {
-        progSpeicher[i] = 0;
+        progSpeicher[i] = -1;
     }
 
     // matchZeile array mit default wert füllen
@@ -73,21 +74,20 @@ void extractBefehle() {
             // Zeilenummer aus ersten 4 Zeichen ermitteln
             for (int i = 0; i < 4; i++) {
                 sZeiger = sZeiger + prog[zeile][i];
-                cout << "Zeiger schleife: " << sZeiger << "\n";
+                //cout << "Zeiger schleife: " << sZeiger << "\n";
             }
-            // Zeilennummer in int umwandeln
-            iZeiger = stoi(sZeiger);
+            // Zeilennummer von hex string in int umwandeln
+            iZeiger = stol(sZeiger, nullptr, 16);
             cout << "int zeiger: " << iZeiger << "\n";
-            cout << "zeiger: " << iZeiger << "\n";
 
             // Befehl aus den nöchsten 4 Zeichen auslesen
             for (int i = 5; i < 9; i++) {
                 sBefehl = sBefehl + prog[zeile][i];
-                cout << "sBefehl schleife: " << sBefehl << "\n";
+                //cout << "sBefehl schleife: " << sBefehl << "\n";
             }
             // Umwandlung von hex string in int 
             iBefehl = stol(sBefehl, nullptr, 16);
-            cout << "iBefehl: " << iBefehl << "\n";
+            cout << "iBefehl in hex: " << hex << iBefehl << "\n";
 
             //Speichern im Programspeicher
             progSpeicher[iZeiger] = iBefehl;
@@ -97,7 +97,7 @@ void extractBefehle() {
             // Globale Zeilennummer ermitteln
             for (int i = 20; i < 26; i++) {
                 sGlobZeiger = sGlobZeiger + prog[zeile][i];
-                cout << "sGlobZeiger Schleife: " << sGlobZeiger << "\n";
+                //cout << "sGlobZeiger Schleife: " << sGlobZeiger << "\n";
             }
 
             // Globale Zeilennummer in int umwandeln
@@ -106,7 +106,7 @@ void extractBefehle() {
 
             // Speichern im matchZeile Array (-1, da array in dem das programm gespeichert ist mit Zeile 1 bei Index 0 beginnt)
             matchZeile[iZeiger] = iGlobZeiger - 1;
-            cout << "Ausgabe Zeile im Array_: " << matchZeile[iZeiger] << "\n";
+            cout << "Ausgabe Zeile im Array_: "  << dec << matchZeile[iZeiger] << "\n";
 
         }
         // Nach abarbeitung oder ignorieren Zeilennummer erhöhen

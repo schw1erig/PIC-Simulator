@@ -14,23 +14,21 @@ void setIOPorts() {
 }
 
 
-// Dummy decode
-void decode(int data) {
 
-	cout << "Decode wurde aufgerufen\n";
 
-};
-
-/*
 //Befehl-Decode
 //derzeit auskommentiert wegen fehlender funktionen
-void decode(data) {
+void decode(int data) {
+
+	cout << "Decode aufgerufen:\n";
+
+	
 
 	switch (data & 0xffff) {
-	case	0x0008:	return	(); break;
-	case	0x0009:	retfie(); break;
-	case	0x0063:	sleep(); break;
-	case	0x0064:	clrwdt(); break;
+	case	0x0008:	picReturn(data); break;
+	case	0x0009:	retfie(data); break;
+	case	0x0063:	sleep(data); break;
+	case	0x0064:	clrwdt(data); break;
 	case	0x0000:	nop(); break;
 	case	0x0020:	nop(); break;
 	case	0x0040:	nop(); break;
@@ -39,67 +37,74 @@ void decode(data) {
 		break;
 	}
 
-	switch (data & 0x3f80) {
-	case	0x0080:	movwf(); break;
-	case	0x0180:	clrf(); break;
-	case	0x0100:	clrw(); break;
+	switch (data & 0xff80) {
+	case	0x0080:	movwf(data); break;
+	case	0x0180:	clrf(data); break;
+	case	0x0100:	clrw(data); break;
 	default:
 		break;
 	}
 
-	switch (data & 0x3f00) {
-	case	0x0200:	subwf(); break;
-	case	0x0400:	iorwf(); break;
-	case	0x0500:	andwf(); break;
-	case	0x0600:	xorwf(); break;
-	case	0x0700:	addwf(); break;
-	case	0x0800:	movf(); break;
-	case	0x0900:	comf(); break;
-	case	0x0a00:	incf(); break;
-	case	0x0300:	decf(); break;
-	case	0x0b00:	decfsz(); break;
-	case	0x0c00:	rrf(); break;
-	case	0x0d00:	rlf(); break;
-	case	0x0e00:	swapf(); break;
-	case	0x0f00:	incfsz(); break;
-	case	0x3800:	iorlw(); break;
-	case	0x3900:	ANDLW(); break;
-	case	0x3a00:	xorlw(); break;
+	switch (data & 0xff00) {
+	case	0x0200:	subwf(data); break;
+	case	0x0400:	iorwf(data); break;
+	case	0x0500:	andwf(data); break;
+	case	0x0600:	xorwf(data); break;
+	case	0x0700:	addwf(data); break;
+	case	0x0800:	movf(data); break;
+	case	0x0900:	comf(data); break;
+	case	0x0a00:	incf(data); break;
+	case	0x0300:	decf(data); break;
+	case	0x0b00:	decfsz(data); break;
+	case	0x0c00:	rrf(data); break;
+	case	0x0d00:	rlf(data); break;
+	case	0x0e00:	swapf(data); break;
+	case	0x0f00:	incfsz(data); break;
+	case	0x3800:	iorlw(data); break;
+	case	0x3900:	andlw(data); break;
+	case	0x3a00:	xorlw(data); break;
 	deafult:
 		break;
 	}
 
-	switch (data & 0x3e00) {
-	case	0x3c00:	sublw(); break;
-	case	0x3e00:	addlw(); break;
+	switch (data & 0xfe00) {
+	case	0x3c00:	sublw(data); break;
+	case	0x3e00:	addlw(data); break;
 	default:
 		break;
 	}
 
-	switch (data & 0x1e00) {
-	case	0x1000:	bcf(); break;
-	case	0x1400:	bsf(); break;
-	case	0x1800:	btfsc(); break;
-	case	0x1c00:	btfss(); break;
-	case	0x3000:	movlw(); break;
-	case	0x3400:	retlw(); break;
+	switch (data & 0xfc00) {
+	case	0x1000:	bcf(data); break;
+	case	0x1400:	bsf(data); break;
+	case	0x1800:	btfsc(data); break;
+	case	0x1c00:	btfss(data); break;
+	case	0x3000:	movlw(data); break;
+	case	0x3400:	retlw(data); break;
 	default:
 		break;
 	}
 
-	switch (data & 0x3800) {
-	case	0x2800:	goto	(); break;
-	case	0x2000:	call(); break;
+	switch (data & 0xf800) {
+	case	0x2800:	picGoto(data); break;
+	case	0x2000:	call(data); break;
 	default:
 		break;
 	}
+
+	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
+	progZeiger++;
+	if (progZeiger == 1024) progZeiger = 0;
+	setPCL(progZeiger & 0xff);
+
 }
 
-*/
+
 
 
 // BYTE-ORIENTED FILE REGISTER OPERATIONS
 void addwf(int data) {
+	cout << "addwf aufgerufen\n";
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
 
@@ -148,7 +153,7 @@ setZ(z);
 
 void andwf(int data)
 {
-
+	cout << "andwf aufgerufen\n";
 	takte += 4; // standard für benötigte Takte 
 	int z = 0;
 	uint8_t result;
@@ -174,6 +179,7 @@ void andwf(int data)
 
 
 void clrf(int data) {
+	cout << "clrf aufgerufen\n";
 
 	takte += 4;
 
@@ -187,6 +193,7 @@ void clrf(int data) {
 }
 
 void clrw(int data) {
+	cout << "clrw aufgerufen\n";
 
 	takte += 4;
 	int z = 1;
@@ -197,7 +204,7 @@ void clrw(int data) {
 }
 
 void comf(int data) {
-
+	cout << "comf aufgerufen\n";
 	takte += 4;
 
 	uint8_t d = (0x0080 & data) > 0; // d bit
@@ -222,7 +229,7 @@ void comf(int data) {
 }
 
 void decf (int data) {
-
+	cout << "decf aufgerufen\n";
 
 	takte += 4;
 
@@ -247,7 +254,7 @@ void decf (int data) {
 }
 
 void decfsz(int data) {
-
+	cout << "decfsz aufgerufen\n";
 
 	takte += 4;
 
@@ -274,7 +281,7 @@ void decfsz(int data) {
 }
 
 void incf(int data) {
-
+	cout << "incf aufgerufen\n";
 
 	takte += 4;
 
@@ -299,7 +306,7 @@ void incf(int data) {
 }
 
 void incfsz(int data) {
-
+	cout << "incfsz aufgerufen\n";
 
 	takte += 4;
 
@@ -326,6 +333,7 @@ void incfsz(int data) {
 }
 
 void iorwf(int data) {
+	cout << "iorwf aufgerufen\n";
 	/*
 	Inclusive OR the W register with contents of
 	register ’f’. If ’d’ is 0 the result is placed in the
@@ -357,6 +365,7 @@ void iorwf(int data) {
 }
 
 void movf(int data) {
+	cout << "movf aufgerufen\n";
 	/* 
 	The contents of register f is moved to a
 	destination dependant upon the status
@@ -387,6 +396,7 @@ void movf(int data) {
 }
 
 void movwf(int data) {
+	cout << "movwf aufgerufen\n";
 	//Move data from W register to register 'f'
 	takte += 4;
 
@@ -397,11 +407,12 @@ void movwf(int data) {
 }
 
 void nop() { 
+	cout << "nop aufgerufen\n";
 	takte += 4; 
 }
 
 void rlf(int data) {
-
+	cout << "rlf aufgerufen\n";
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = dataSpeicher[getRP0()][f];
@@ -434,7 +445,7 @@ void rlf(int data) {
 }
 
 void rrf(int data) {
-
+	cout << "rrf aufgerufen\n";
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = dataSpeicher[getRP0()][f];
@@ -469,7 +480,7 @@ void rrf(int data) {
 }
 
 void subwf(int data) {
-
+	cout << "subwf aufgerufen\n";
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
 
@@ -523,7 +534,7 @@ void subwf(int data) {
 }
 
 void swapf(int data) {
-
+	cout << "swapf aufgerufen\n";
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
 
@@ -548,7 +559,7 @@ void swapf(int data) {
 
 
 void xorwf(int data) {
-	
+	cout << "xorwf aufgerufen\n";
 	uint8_t d = (0x0080 & data) > 0; // d bit
 	uint8_t f = 0x007f & data; // Register Pfad
 
@@ -573,11 +584,11 @@ void xorwf(int data) {
 
 }
 
-/*
+
 // Bitorientierten Befehle
 
 void bcf(int data) {
-
+	cout << "bcf aufgerufen\n";
 	// Löscht Bit b in Adresse f
 
 	uint8_t f = 0x007f & data; // Register Pfad
@@ -610,7 +621,7 @@ void bcf(int data) {
 }
 
 void bsf(int data) {
-
+	cout << "bsf aufgerufen\n";
 	// Setzt Bit b in Adresse f
 
 	uint8_t f = 0x007f & data; // Register Pfad
@@ -644,6 +655,7 @@ void bsf(int data) {
 }
 
 void btfsc(int data) {
+	cout << "btfsc aufgerufen\n";
 	// Testet Bit b an Adr. f und springt, wenn es 0 ist
 
 	uint8_t f = 0x007f & data; // Register Pfad
@@ -684,7 +696,7 @@ void btfsc(int data) {
 }
 
 void btfss(int data) {
-
+	cout << "btfss aufgerufen\n";
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
 	uint8_t reg;
@@ -723,12 +735,13 @@ void btfss(int data) {
 	takte += 4;
 
 }
-*/
+
 
 
 
 
 void addlw(int data) {
+	cout << "addlw aufgerufen\n";
 	// Add literal and W
 	uint8_t k = 0x00ff & data;
 	
@@ -770,9 +783,8 @@ void addlw(int data) {
 
 }
 
-void andlw(int data)
-{
-
+void andlw(int data){
+	cout << "andlw aufgerufen\n";
 	
 	int z = 0;
 	uint8_t result;
@@ -793,12 +805,17 @@ void andlw(int data)
 }
 
 void call(int data) {
+	cout << "call aufgerufen\n";
 	// Unterprogrammaufruf an Adresse k
 
-	int k = data & 0x07ff,
+	int k = data & 0x07ff;
+
+	cout << "k: " << k << "\n";
 
 	// First, return address (PC + 1) is pushed onto the stack.
-	pushStack(progZeiger + 1);
+
+	pushStack(progZeiger+1);
+	cout << "stack[0]: " << stack[0] << "\n" << "ProgZeiger+1: " << progZeiger + 1 << "\n";
 
 	// The eleven bit immediate address is loaded into PC bits <10:0>.
 	progZeiger = k;
@@ -809,9 +826,12 @@ void call(int data) {
 
 	takte += 8;
 
+	execBefehl();
+
 }
 
 void clrwdt(int data) {
+	cout << "clrwdt aufgerufen\n";
 	// löscht den Watchdog
 
 	/*
@@ -829,8 +849,8 @@ void clrwdt(int data) {
 
 }
 
-void goTo(int data) {
-
+void picGoto(int data) {
+	cout << "picGoto aufgerufen\n";
 	// Sprung zur Adresse k
 	
 	/*
@@ -849,10 +869,13 @@ void goTo(int data) {
 
 	takte += 8;
 
+	execBefehl();
+
 }
 
 
 void iorlw(int data) {
+	cout << "iorlw aufgerufen\n";
 	// Literal wird mit dem W-Reg. ODER verknüpft
 
 	uint8_t k = 0x00ff & data; // Literal k Pfad
@@ -875,6 +898,7 @@ void iorlw(int data) {
 }
 
 void movlw(int data) {
+	cout << "movlw aufgerufen\n";
 	// The eight bit literal ’k’ is loaded into W register.The don’t cares will assemble as 0’s.
 	
 	uint8_t k = 0xff & data; // Register Pfad
@@ -887,6 +911,7 @@ void movlw(int data) {
 }
 
 void retfie(int data) {
+	cout << "retfie aufgerufen\n";
 	// Rückkehr aus der Interruptroutine, setzte GIE
 
 	progZeiger = popStack();
@@ -897,6 +922,7 @@ void retfie(int data) {
 }
 
 void retlw(int data) {
+	cout << "retlw aufgerufen\n";
 	// Rückkehr aus einem Unterprogramm, lädt k in W
 
 
@@ -917,7 +943,8 @@ void retlw(int data) {
 	takte += 8;
 }
 
-void pic_return(int data) {
+void picReturn(int data) {
+	cout << "picReturn aufgerufen\n";
 	// Rückkehr aus einem Unterprogramm
 
 
@@ -934,6 +961,7 @@ void pic_return(int data) {
 }
 
 void sleep(int data) {
+	cout << "sleep aufgerufen\n";
 	// Geht in den Stand By Modus
 
 	setPD(0);
@@ -952,6 +980,7 @@ void sleep(int data) {
 
 
 void sublw(int data) {
+	cout << "sublw aufgerufen\n";
 	// Subtrahiert W vom Literal k
 
 	uint8_t k = 0x00ff & data; // Literal k Pfad
@@ -995,12 +1024,10 @@ void sublw(int data) {
 	// Erhöhe Takte  
 	takte += 4;
 
-
-
-
 }
 
 void xorlw(int data) {
+	cout << "xorlw aufgerufen\n";
 	// EXCLUSIV ODER Verknüpfung von W und k
 
 	uint8_t k = 0x00ff & data; // Literal k Pfad
@@ -1023,17 +1050,13 @@ void xorlw(int data) {
 
 
 void execBefehl() {
-
+	cout << "\nZeile: (beginnend bei 1)" << dec << matchZeile[progZeiger] + 1 << "\n";
+	cout << "execBefehl aufgerufen\n";
 	//befehl an stelle des programmzählers erhalten
 	int befehl = progSpeicher[progZeiger];
 	// erhaltenen befehl decoden
 	decode(befehl);
 	
-	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
-	progZeiger++;
-	if (progZeiger == 1024) progZeiger = 0;
- 	setPCL(progZeiger & 0xff);
-
 	progTime += (takte / quarzTakt); // progTime in mikrosekunden
 
 	// GUI aktualisieren
@@ -1042,7 +1065,7 @@ void execBefehl() {
 }
 
 int popStack() {
-
+	cout << "popStack aufgerufen\n";
 	int top = stack[0];
 	
 	// i < 7 , da vor dem eletzte nelement aufgehört werden muss, sonst zeigerüberlauf 
@@ -1059,6 +1082,8 @@ int popStack() {
 
 void pushStack(int wert) {
 
+	cout << "pushStack aufgerufen\n";
+
 	for (int i = 7; i > 0; i--) {
 		stack[i] = stack[i-1];
 	}
@@ -1066,3 +1091,4 @@ void pushStack(int wert) {
 	stack[0] = wert;
 
 }
+

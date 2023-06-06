@@ -13,7 +13,7 @@ extern uint8_t dataSpeicher[2][128];
 // Stack
 extern int stack[8];
 // Speicher für das gesamte Program
-extern string prog[1000];
+extern string prog[1024];
 //  
 extern int matchZeile[1024];
 

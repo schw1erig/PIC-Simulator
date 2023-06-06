@@ -28,3 +28,28 @@ void testAddwf() {
     cout << "\nwRegErg : " << (int)wReg;
     cout << "\nFRegErg: " << (int)dataSpeicher[0][1] << "\nC: " << getC() << "\nDC: " << getDC() << "\nZ: " << getZ() << "\n";
 }
+
+void testProgAblauf() {
+
+    // Debug ausgabe des eingelesenen programms
+    cout << "\n\n\nBefehle: \n";
+
+    while (progSpeicher[progZeiger] != -1) {
+
+
+        cout << hex << progSpeicher[progZeiger] << ", ";
+        progZeiger++;
+
+    }
+    progZeiger = 0;
+
+    // Test Schleife zum Programmdurchlauf
+    cout << "\nStartProgramm\n";
+    while (progSpeicher[progZeiger] != -1) {
+        
+        execBefehl();
+
+    }
+
+
+}

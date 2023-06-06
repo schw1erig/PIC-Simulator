@@ -6,6 +6,7 @@
 
 using namespace std;
 
+
 // Programmspeicher
 int progSpeicher[1024];
 // Speicherbank [bank: 0-1] [register: 0-127]
@@ -13,8 +14,8 @@ uint8_t dataSpeicher[2][128];
 // Stack
 int stack[8];
 // Speicher für das gesamte Program
-string prog[1000];
-// Zeile des Befehls der globalen Zeile zuordnen
+string prog[1024];
+// Zeile des Befehls der globalen Zeile zuordnen (erste globale zeile entspricht der 0ten zeile)
 int matchZeile[1024];
 
 uint8_t wReg = 0x00;
@@ -57,6 +58,7 @@ int main()
         dataSpeicher[1][i] = 0;
     }
 
+
     // PD und TO auf 1 bei Power on
     setPD(1);
     setTO(1);
@@ -74,9 +76,10 @@ int main()
     // Befehle aus dem Programm extrahieren
     extractBefehle();
 
-    testSetStatus();
-    
-    testAddwf();
+    //testSetStatus();
+    //estAddwf();
+
+    testProgAblauf();
 
     return 0;
 }

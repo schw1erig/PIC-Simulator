@@ -2,3 +2,5 @@
 
 void testSetStatus();
 void testAddwf();
+
+void testProgAblauf();
