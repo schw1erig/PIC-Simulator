@@ -53,3 +53,18 @@ void testProgAblauf() {
 
 
 }
+
+void testSyncDataSpeicher() {
+
+    cout << "indirect bank 1 und bank 2: " << (int)dataSpeicher[0][14] << "; " << (int)dataSpeicher[1][0] << "\n";
+    // Setze status auf bank 0 auf 8
+    dataSpeicher[0][0] = 8;
+
+    cout << "Nach dem setzen: indirect bank 1 und bank 2: " << (int)dataSpeicher[0][0] << "; " << (int)dataSpeicher[1][0] << "\n";
+
+    syncDataSpeicher();
+
+    cout << "Nach dem sync: indirect bank 1 und bank 2: " << (int)dataSpeicher[0][0] << "; " << (int)dataSpeicher[1][0] << "\n";
+
+
+}

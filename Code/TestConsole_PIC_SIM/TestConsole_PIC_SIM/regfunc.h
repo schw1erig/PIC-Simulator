@@ -2,16 +2,19 @@
 #include <iostream>
 
 
+void syncDataSpeicher();
+
+//----------
 int getFSR();
 
-//-----
+//----------
 int getPCL();
 void setPCL(uint8_t wert);
 
 int getPCLATH();
 void setPCLATH(uint8_t wert);
 
-//----
+//----------
 void setGIE(int wert);
 void setEEIE(int wert);
 void setT0IE(int wert);
@@ -40,7 +43,7 @@ int getZ();
 int getPD();
 int getTO();
 int getRP0();
-//---
+//----
 void setStatus(uint8_t maske, int wert);
 void setC(int wert);
 void setDC(int wert);

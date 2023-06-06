@@ -6,6 +6,28 @@ using namespace std;
 
 
 
+void syncDataSpeicher() {
+
+	// status 
+	// intcon 
+	// PCL
+	// PCLATH
+	//über deren setFuntionen bereits syncron
+
+	// sync indirect
+	dataSpeicher[!getRP0()][0] = dataSpeicher[getRP0()][0];
+
+	// sync fsr
+	dataSpeicher[!getRP0()][4] = dataSpeicher[getRP0()][4];
+
+	// sync anwendungsbereich
+	for (int i = 12; i < 64; i++) {
+		dataSpeicher[!getRP0()][i] = dataSpeicher[getRP0()][i];
+	}
+
+
+}
+
 int getFSR() {
 
 	return dataSpeicher[getRP0()][4];

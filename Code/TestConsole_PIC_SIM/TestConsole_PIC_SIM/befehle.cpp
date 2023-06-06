@@ -3,17 +3,12 @@
 #include <iostream>
 
 
-
-
 using namespace std;
-
 
 
 void setIOPorts() {
 
 }
-
-
 
 
 //Befehl-Decode
@@ -92,10 +87,7 @@ void decode(int data) {
 		break;
 	}
 
-	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
-	progZeiger++;
-	if (progZeiger == 1024) progZeiger = 0;
-	setPCL(progZeiger & 0xff);
+	
 
 }
 
@@ -134,19 +126,19 @@ void addwf(int data) {
 	}
 	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
-// Speicherort ermittlen
-if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
-{
-	dataSpeicher[getRP0()][f] = (uint8_t)result;   // Speichert das Ergebnis im Register
-}
-else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
-{
-	wReg = (uint8_t)result;
-}
+	// Speicherort ermittlen
+	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
+	{
+		dataSpeicher[getRP0()][f] = (uint8_t)result;   // Speichert das Ergebnis im Register
+	}
+	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
+	{
+		wReg = (uint8_t)result;
+	}
 
-setC(c);
-setDC(dc);
-setZ(z);
+	setC(c);
+	setDC(dc);
+	setZ(z);
 
 }
 
@@ -815,18 +807,48 @@ void call(int data) {
 	// First, return address (PC + 1) is pushed onto the stack.
 
 	pushStack(progZeiger+1);
-	cout << "stack[0]: " << stack[0] << "\n" << "ProgZeiger+1: " << progZeiger + 1 << "\n";
+	cout << "stack[0]: " << stack[0] << "\n";
 
 	// The eleven bit immediate address is loaded into PC bits <10:0>.
 	progZeiger = k;
-
+	
 	//The upper bits of the PC are loaded from PCLATH. 
+	
+	int pclath3 = getPCLATH() & 0x08;
+	int pclath4 = getPCLATH() & 0x10;
 
-	progZeiger |= ((getPCLATH() & 0x18) < 14);
+	if (pclath3 > 0) {
+
+		progZeiger |= (1u << 14);
+
+	}
+	else {
+
+		progZeiger &= ~(1u << 14);
+		progZeiger &= 0x1fff;
+
+	}
+
+
+	if (pclath4 > 0) {
+
+		progZeiger |= (1u << 15);
+
+	}
+	else {
+
+		progZeiger &= ~(1u << 15);
+		progZeiger &= 0x1fff;
+
+	}
+
+	cout <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
+
+	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
+	progZeiger--;
 
 	takte += 8;
 
-	execBefehl();
 
 }
 
@@ -865,11 +887,40 @@ void picGoto(int data) {
 
 	progZeiger = k;
 
-	progZeiger |= ((getPCLATH() & 0x18) < 14);
+	cout << "PCLATH: " << getPCLATH() << "\n";
+
+	int pclath3 = getPCLATH() & 0x08;
+	int pclath4 = getPCLATH() & 0x10;
+
+	if (pclath3 > 0) {
+
+		progZeiger |= (1u << 14);
+
+	}
+	else {
+
+		progZeiger &= ~(1u << 14);
+		progZeiger &= 0x1fff;
+
+	}
+
+
+	if (pclath4 > 0) {
+
+		progZeiger |= (1u << 15);
+
+	}
+	else {
+
+		progZeiger &= ~(1u << 15);
+		progZeiger &= 0x1fff;
+
+	}
+
+	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
+	progZeiger--;
 
 	takte += 8;
-
-	execBefehl();
 
 }
 
@@ -915,7 +966,9 @@ void retfie(int data) {
 	// Rückkehr aus der Interruptroutine, setzte GIE
 
 	progZeiger = popStack();
-	
+	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
+	progZeiger--;
+
 	setGIE(1);
 
 	takte += 8;
@@ -939,6 +992,8 @@ void retlw(int data) {
 	wReg = k;
 
 	progZeiger = popStack();
+	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
+	progZeiger--;
 
 	takte += 8;
 }
@@ -956,6 +1011,8 @@ void picReturn(int data) {
 	*/
 
 	progZeiger = popStack();
+	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
+	progZeiger--;
 
 	takte += 8;
 }
@@ -1057,7 +1114,14 @@ void execBefehl() {
 	// erhaltenen befehl decoden
 	decode(befehl);
 	
+	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
+	progZeiger++;
+	if (progZeiger == 1024) progZeiger = 0;
+	setPCL(progZeiger & 0xff);
+
 	progTime += (takte / quarzTakt); // progTime in mikrosekunden
+
+	syncDataSpeicher();
 
 	// GUI aktualisieren
 	// refreshGUI();
@@ -1068,7 +1132,7 @@ int popStack() {
 	cout << "popStack aufgerufen\n";
 	int top = stack[0];
 	
-	// i < 7 , da vor dem eletzte nelement aufgehört werden muss, sonst zeigerüberlauf 
+	// i < 7 , da vor dem letzten element aufgehört werden muss, sonst zeigerüberlauf 
 	for (int i = 0; i < 7; i++) {	
 		stack[i + 1] = stack[i];
 

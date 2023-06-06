@@ -24,14 +24,13 @@ uint8_t wdt = 0x00; //Watchdog
 int wdtPre = 0; // Watchdog prescaler
 
 
-
-uint8_t maskeC;
-uint8_t maskeDC;
-uint8_t maskeZ;
-uint8_t maskePD;
-uint8_t maskeTO;
-uint8_t maskeRP0;
-uint8_t maskeIRP;
+uint8_t maskeC = 0x0001;
+uint8_t maskeDC = 0x0002;
+uint8_t maskeZ = 0x0004;
+uint8_t maskePD = 0x0008;
+uint8_t maskeTO = 0x0010;
+uint8_t maskeRP0 = 0x0020;
+uint8_t maskeIRP = 0x0080;
 
 int progZeiger = 0;
 int stackZeiger = 0;
@@ -43,14 +42,7 @@ int takte = 0;
 
 int main()
 {
-    maskeC = 0x0001;
-    maskeDC = 0x0002;
-    maskeZ = 0x0004;
-    maskePD = 0x0008;
-    maskeTO = 0x0010;
-    maskeRP0 = 0x0020;
-    maskeIRP = 0x0080;
-
+    
     // Power UP:
     // init dataSpeicher
     for (int i = 0; i < 127; i++) {
@@ -64,11 +56,11 @@ int main()
     setTO(1);
 
     // Bits im Option reg auf 1 setzen
-    dataSpeicher[1][1] = 0;
+    dataSpeicher[1][1] = 0xff;
 
     // Programm einlesen
     //Pfad für die Datei festlegen
-    string filename = "D:/GitHub/PIC-Simulator/TestProg_PicSim_20210420/TPicSim2.LST";
+    string filename = "D:/GitHub/PIC-Simulator/TestProg_PicSim_20210420/TPicSim1.LST";
     //Datei einlesen
     einlesen(filename);
     //Eingelesene Datei ausgeben
@@ -76,10 +68,9 @@ int main()
     // Befehle aus dem Programm extrahieren
     extractBefehle();
 
-    //testSetStatus();
-    //estAddwf();
-
+    // Eingelesenes Programm durchführen
     testProgAblauf();
+
 
     return 0;
 }
