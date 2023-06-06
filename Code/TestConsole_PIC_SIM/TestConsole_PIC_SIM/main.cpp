@@ -17,9 +17,11 @@ string prog[1000];
 // Zeile des Befehls der globalen Zeile zuordnen
 int matchZeile[1024];
 
-uint8_t wReg = 0;
-int pcl = 0;
-int gie = 0;
+uint8_t wReg = 0x00;
+
+uint8_t wdt = 0x00; //Watchdog 
+int wdtPre = 0; // Watchdog prescaler
+
 
 
 uint8_t maskeC;
@@ -37,6 +39,7 @@ int quarzTakt = 4;  // in MHZ
 int progTime = 0; // in Micro-Sekunden
 int takte = 0;
 
+
 int main()
 {
     maskeC = 0x0001;
@@ -47,12 +50,21 @@ int main()
     maskeRP0 = 0x0020;
     maskeIRP = 0x0080;
 
+    // Power UP:
     // init dataSpeicher
     for (int i = 0; i < 127; i++) {
         dataSpeicher[0][i] = 0;
         dataSpeicher[1][i] = 0;
     }
 
+    // PD und TO auf 1 bei Power on
+    setPD(1);
+    setTO(1);
+
+    // Bits im Option reg auf 1 setzen
+    dataSpeicher[1][1] = 0;
+
+    // Programm einlesen
     //Pfad für die Datei festlegen
     string filename = "D:/GitHub/PIC-Simulator/TestProg_PicSim_20210420/TPicSim2.LST";
     //Datei einlesen
@@ -65,8 +77,6 @@ int main()
     testSetStatus();
     
     testAddwf();
-
-    cout << "Test: " << (5 > 0);
 
     return 0;
 }

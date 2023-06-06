@@ -2,102 +2,12 @@
 #include "common.h"
 #include <iostream>
 
+
+
+
 using namespace std;
 
-int getStatus(uint8_t maske) {
 
-	// lese status aus dem aktuellen Datenspeicher (da status in beiden Bänken gleich eigentlich unnötig)
-	uint8_t status = dataSpeicher[(dataSpeicher[0][3] & maskeRP0)][3];
-
-	return ((status & maske) > 0);
-}
-
-int getC() {
-	return getStatus(maskeC);
-}
-
-int getDC() {
-	return getStatus(maskeDC);
-}
-
-int getZ() {
-	return getStatus(maskeZ);
-}
-
-int getPD() {
-	return getStatus(maskePD);
-}
-
-int getTO() {
-	return getStatus(maskeTO);
-}
-
-int getRP0() {
-	return getStatus(maskeRP0);
-}
-
-
-
-void setStatus(uint8_t maske, int wert) {
-
-	uint8_t status;
-
-	status = dataSpeicher[0][3];
-
-	int bit = (status & maske) > 0;
-
-	if (bit == wert) {
-	}
-	else if (bit == 0 && wert == 0) {
-		status &= ~(maske);
-	}
-	else if (bit == 0 && wert == 1) {
-		status |= maske;
-	}
-	else if (bit == 1 && wert == 0) {
-		status ^= maske;
-	}
-
-	dataSpeicher[0][3] = status;
-	dataSpeicher[1][3] = status;
-
-}
-
-void setC(int wert) {
-
-	setStatus(maskeC, wert);
-
-}
-
-void setDC(int wert) {
-
-	setStatus(maskeDC, wert);
-
-}
-
-void setZ(int wert) {
-
-	setStatus(maskeZ, wert);
-
-}
-
-void setPD(int wert) {
-
-	setStatus(maskePD, wert);
-
-}
-
-void setTO(int wert) {
-
-	setStatus(maskeTO, wert);
-
-}
-
-void setRP0(int wert) {
-
-	setStatus(maskeRP0, wert);
-
-}
 
 void setIOPorts() {
 
@@ -569,19 +479,17 @@ void subwf(int data) {
 	int result;
 	int reg = (int)dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
 
-	
 
-	takte += 4; // standard für benötigte Takte 
 
 	//DC berechnung
 	// DC: bei add: > 15 -> dc = 1, <= 15 -> dc = 0 ; sub: < 0 -> dc = 1, >= 0 -> dc  0
 
-	if ( ((wReg & 0x0f) - (reg & 0x0f) ) < 0) {
+	if ( ((reg & 0x0f) - (wReg & 0x0f)) < 0) {
 		dc = 1; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
 	}
 
 	// Berechnung
-	result = wReg - reg;   // subtrahiere wert im register f von wREG 
+	result = reg - wReg;   // subtrahiere wert im register f von wREG 
 
 	// Flags festlegen
 	if (result < 0) {
@@ -605,10 +513,12 @@ void subwf(int data) {
 		wReg = (uint8_t)result;
 	}
 
+	// setze Flags
 	setC(c);
 	setDC(dc);
 	setZ(z);
 
+	// ERhöhe Takte
 	takte += 4;
 }
 
@@ -663,49 +573,110 @@ void xorwf(int data) {
 
 }
 
+/*
 // Bitorientierten Befehle
 
 void bcf(int data) {
 
+	// Löscht Bit b in Adresse f
+
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
-	uint8_t reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+	uint8_t reg;
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
-	reg &= ~(1u << b); //löschen des bten bits mit komplement und UND
-	dataSpeicher[getRP0()][f] = reg;
+
+	if (f == 0x00) {
+
+		// indirekte adressierung
+
+		int bank = (f & 0xf0) > 0;
+		int fsr = getFSR() & 0x0f;
+		reg = dataSpeicher[bank][fsr];
+		reg &= ~(1u << b); //löschen des bten bits mit komplement und UND
+		dataSpeicher[bank][fsr] = reg; // Speichere ergebniss im register 
+
+	}
+	else {
+
+		// direkte Adressierung
+		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+		reg &= ~(1u << b); //löschen des bten bits mit komplement und UND
+		dataSpeicher[getRP0()][f] = reg;
+
+	}
 
 	takte += 4;
 }
 
 void bsf(int data) {
 
+	// Setzt Bit b in Adresse f
+
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
-	uint8_t reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+	uint8_t reg;
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
-	reg != (1u << b); //setzen des bten bits mit komplement und UND
-	dataSpeicher[getRP0()][f] = reg;
+
+	if (f == 0x00) {
+
+		// indirekte adressierung
+
+		int bank = (f & 0xf0) > 0;
+		int fsr = getFSR() & 0x0f;
+		reg = dataSpeicher[bank][fsr];
+
+		reg |= (1u << b); //setzen des bten bits: mit UND
+		dataSpeicher[bank][fsr] = reg; // Speichere ergebniss im register 
+
+	}
+	else {
+
+		// direkte Adressierung
+		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+		reg |= (1u << b); //setzen des bten bits: mit UND
+		dataSpeicher[getRP0()][f] = reg;
+
+	}
 
 	takte += 4;
 }
 
 void btfsc(int data) {
+	// Testet Bit b an Adr. f und springt, wenn es 0 ist
 
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
-	uint8_t reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+	uint8_t reg;
 
-	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
-	
-	if ((f & b) > 0) {
-		// bit b in f = 1 -> do nothing + next befehl
+	// register ermitteln
+	if (f == 0x00) {
+
+		// indirekte adressierung
+
+		int bank = (f & 0xf0) > 0;
+		int fsr = getFSR() & 0x0f;
+		reg = dataSpeicher[bank][fsr];
+
 	}
 	else {
-		// bit b i nf = 0, führe nop() aus und überspringe den nächsten befehl
-		nop();
+
+		// direkte Adressierung
+		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+		reg |= (1u << b); //setzen des bten bits: mit UND
+		dataSpeicher[getRP0()][f] = reg;
+
+	}
+
+	if ((reg & b) > 0) {
+		// bit b in reg an stelle f = 1 -> do nothing + next befehl
+	}
+	else {
+		// bit b in reg an stelle f = 0, führe nop() aus und überspringe den nächsten befehl
 		progZeiger++;
+		nop();
+		
 	}
 
 	takte += 4;
@@ -716,23 +687,43 @@ void btfss(int data) {
 
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
-	uint8_t reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+	uint8_t reg;
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
+
+	// register ermitteln
+	if (f == 0x00) {
+
+		// indirekte adressierung
+
+		int bank = (f & 0xf0) > 0;
+		int fsr = getFSR() & 0x0f;
+		reg = dataSpeicher[bank][fsr];
+
+	}
+	else {
+
+		// direkte Adressierung
+		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
+		reg |= (1u << b); //setzen des bten bits: mit UND
+		dataSpeicher[getRP0()][f] = reg;
+
+	}
 
 	if ((f & b) == 0) {
 		// bit b in f = 0-> do nothing + next befehl
 	}
 	else {
 		// bit b in f = 1, führe nop() aus und überspringe den nächsten befehl
-		nop();
 		progZeiger++;
+		nop();
+		
 	}
 
 	takte += 4;
 
 }
-
+*/
 
 
 
@@ -779,7 +770,6 @@ void addlw(int data) {
 
 }
 
-
 void andlw(int data)
 {
 
@@ -803,23 +793,26 @@ void andlw(int data)
 }
 
 void call(int data) {
+	// Unterprogrammaufruf an Adresse k
 
-	stack[stackZeiger] = progSpeicher[progZeiger + 1];
+	int k = data & 0x07ff,
 
-	/*
-	Call Subroutine. First, return address
-	(PC+1) is pushed onto the stack. The
-	eleven bit immediate address is loaded
-	into PC bits <10:0>. The upper bits of
-	the PC are loaded from PCLATH. CALL
-	is a two cycle instruction.
-	*/
+	// First, return address (PC + 1) is pushed onto the stack.
+	pushStack(progZeiger + 1);
+
+	// The eleven bit immediate address is loaded into PC bits <10:0>.
+	progZeiger = k;
+
+	//The upper bits of the PC are loaded from PCLATH. 
+
+	progZeiger |= ((getPCLATH() & 0x18) < 14);
 
 	takte += 8;
 
 }
 
 void clrwdt(int data) {
+	// löscht den Watchdog
 
 	/*
 	CLRWDT instruction resets the Watchdog
@@ -828,8 +821,8 @@ void clrwdt(int data) {
 	set.
 	*/
 	
-	// wdt = 0;
-	// wdtPre = 0;
+	wdt = 0x00;
+	wdtPre = 0;
 
 	setTO(1);
 	setPD(1);
@@ -837,6 +830,9 @@ void clrwdt(int data) {
 }
 
 void goTo(int data) {
+
+	// Sprung zur Adresse k
+	
 	/*
 	GOTO is an unconditional branch. The
 	eleven bit immediate value is loaded
@@ -847,11 +843,9 @@ void goTo(int data) {
 
 	int k = data & 0x07ff;
 
+	progZeiger = k;
 
-	progZeiger = 0;
-	progZeiger |= k;
-
-	progZeiger |= ((pcl & 0x18) < 8);
+	progZeiger |= ((getPCLATH() & 0x18) < 14);
 
 	takte += 8;
 
@@ -859,13 +853,8 @@ void goTo(int data) {
 
 
 void iorlw(int data) {
-	
-	/*
-	The contents of the W register is
-	OR’ed with the eight bit literal 'k'. The
-	result is placed in the W register.
-	*/
-	
+	// Literal wird mit dem W-Reg. ODER verknüpft
+
 	uint8_t k = 0x00ff & data; // Literal k Pfad
 
 	// Führe verorderung durch
@@ -898,15 +887,18 @@ void movlw(int data) {
 }
 
 void retfie(int data) {
+	// Rückkehr aus der Interruptroutine, setzte GIE
 
 	progZeiger = popStack();
 	
-	gie = 1;
+	setGIE(1);
 
 	takte += 8;
 }
 
 void retlw(int data) {
+	// Rückkehr aus einem Unterprogramm, lädt k in W
+
 
 	/*
 		The W register is loaded with the eight
@@ -926,6 +918,8 @@ void retlw(int data) {
 }
 
 void pic_return(int data) {
+	// Rückkehr aus einem Unterprogramm
+
 
 	/*
 		Return from subroutine. The stack is
@@ -939,6 +933,94 @@ void pic_return(int data) {
 	takte += 8;
 }
 
+void sleep(int data) {
+	// Geht in den Stand By Modus
+
+	setPD(0);
+
+	setTO(1);
+
+	wdt = 0;
+	wdtPre = 0;
+
+	takte += 4;
+
+	// go to sleep
+	//See Section 14.8 for more details.
+
+}
+
+
+void sublw(int data) {
+	// Subtrahiert W vom Literal k
+
+	uint8_t k = 0x00ff & data; // Literal k Pfad
+
+	int c = 0;
+	int z = 0;
+	int dc = 0;
+	int result;
+	
+
+	//DC berechnung
+	// DC: bei add: > 15 -> dc = 1, <= 15 -> dc = 0 ; sub: < 0 -> dc = 1, >= 0 -> dc  0
+
+	if (((k & 0x0f) - (wReg & 0x0f)) < 0) {
+		dc = 1; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
+	}
+
+	// Berechnung
+	result = k - wReg;   // subtrahiere wert im register f von wREG 
+
+	// Flags festlegen
+	if (result < 0) {
+		// Setzt das Carry-Flag basierend auf dem Ergebnis
+		c = 0; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
+		result += 255;
+	}
+	else {
+		c = 1;
+	}
+
+	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+
+	// Schreibe result in wReg
+	wReg = (uint8_t)result;
+	
+	// Setze Flags
+	setC(c);
+	setDC(dc);
+	setZ(z);
+
+	// Erhöhe Takte  
+	takte += 4;
+
+
+
+
+}
+
+void xorlw(int data) {
+	// EXCLUSIV ODER Verknüpfung von W und k
+
+	uint8_t k = 0x00ff & data; // Literal k Pfad
+
+	// Ergebniss ermitteln
+	uint8_t result = wReg ^ k;
+
+
+	// Speichern im wReg
+	wReg = result;
+	
+
+	// Flags setzen
+	setZ(1);
+
+	// Takte erhöhen
+	takte += 4;
+
+}
+
 
 void execBefehl() {
 
@@ -946,10 +1028,13 @@ void execBefehl() {
 	int befehl = progSpeicher[progZeiger];
 	// erhaltenen befehl decoden
 	decode(befehl);
-	// ProgZeiger erhöhen
+	
+	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
 	progZeiger++;
+	if (progZeiger == 1024) progZeiger = 0;
+ 	setPCL(progZeiger & 0xff);
 
-	progTime += (takte / quarzTakt); // not sure
+	progTime += (takte / quarzTakt); // progTime in mikrosekunden
 
 	// GUI aktualisieren
 	// refreshGUI();
@@ -960,6 +1045,7 @@ int popStack() {
 
 	int top = stack[0];
 	
+	// i < 7 , da vor dem eletzte nelement aufgehört werden muss, sonst zeigerüberlauf 
 	for (int i = 0; i < 7; i++) {	
 		stack[i + 1] = stack[i];
 
@@ -968,5 +1054,15 @@ int popStack() {
 	stack[7] = 0;
 	
 	return top;
+
+}
+
+void pushStack(int wert) {
+
+	for (int i = 7; i > 0; i--) {
+		stack[i] = stack[i-1];
+	}
+
+	stack[0] = wert;
 
 }

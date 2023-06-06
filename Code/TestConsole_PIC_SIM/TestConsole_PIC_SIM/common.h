@@ -2,6 +2,7 @@
 #include "befehle.h"
 #include "einlesen.h"
 #include "test.h"
+#include "regfunc.h"
 
 using namespace std;
 
@@ -18,8 +19,11 @@ extern int matchZeile[1024];
 
 extern uint8_t wReg;
 
-extern int pcl;
-extern int gie;
+extern uint8_t wdt; //Watchdog 
+extern int wdtPre; // Watchdog prescaler
+
+
+
 
 extern uint8_t maskeC;
 extern uint8_t maskeDC;
