@@ -24,17 +24,24 @@ void setT0IF(int wert);
 void setINTF(int wert);
 void setRBIF(int wert);
 //----
-int getGIE(int wert);
-int getEEIE(int wert);
-int getT0IE(int wert);
-int getINTE(int wert);
-int getRBIE(int wert);
-int getT0IF(int wert);
-int getINTF(int wert);
-int getRBIF(int wert);
+int getGIE();
+int getEEIE();
+int getT0IE();
+int getINTE();
+int getRBIE();
+int getT0IF();
+int getINTF();
+int getRBIF();
 int getINTCON(uint8_t maske);
 void setINTCON(uint8_t maske, int wert);
 
+//----------
+void setPreVar(int wert);
+int getTOCS();
+int getPSA();
+int getPS();
+int getOption(uint8_t maske);
+void setOption(uint8_t maske, int wert);
 //----------
 int getStatus(uint8_t maske);
 int getC();

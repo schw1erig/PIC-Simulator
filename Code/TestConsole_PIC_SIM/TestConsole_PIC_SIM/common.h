@@ -19,8 +19,8 @@ extern int matchZeile[1024];
 
 extern uint8_t wReg;
 
-extern uint8_t wdt; //Watchdog 
-extern int wdtPre; // Watchdog prescaler
+extern int wdt; //Watchdog 
+extern int pre; //  prescaler/vorteiler
 
 
 

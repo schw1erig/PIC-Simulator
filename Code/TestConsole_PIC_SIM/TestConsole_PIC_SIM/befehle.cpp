@@ -17,7 +17,9 @@ void decode(int data) {
 
 	cout << "Decode aufgerufen:\n";
 
-	
+	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
+	progZeiger++;
+	if (progZeiger == 1024) progZeiger = 0;
 
 	switch (data & 0xffff) {
 	case	0x0008:	picReturn(data); break;
@@ -129,7 +131,31 @@ void addwf(int data) {
 	// Speicherort ermittlen
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
+		
 		dataSpeicher[getRP0()][f] = (uint8_t)result;   // Speichert das Ergebnis im Register
+		
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// PC setzen mit PCL und PClath ersetzen
+		if (f == 2) {
+
+			progZeiger = 0;
+			progZeiger |= (int) f;
+			int pcLath5Bit = (dataSpeicher[getRP0()][0x0A]) & (0x1f);
+			progZeiger |= (pcLath5Bit << 8);
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+			
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -160,6 +186,20 @@ void andwf(int data)
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   // Speichert das Ergebnis im Register
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -177,8 +217,23 @@ void clrf(int data) {
 
 	uint8_t f = (data & 0x7f);
 	int z = 1;
+	uint8_t reg = dataSpeicher[getRP0()][f]; //aktueller wert in reg f
+	uint8_t result = 0;
 
-	dataSpeicher[getRP0()][f] = 0;
+	dataSpeicher[getRP0()][f] = result;
+
+	//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+	if (f == 3) {
+		dataSpeicher[0][f] = result;
+		dataSpeicher[1][f] = result;
+	}
+
+	// Prüfe ob prescaler bits verändert wurden
+	if (f == 1 && getRP0() == 1) {
+		if ((reg & 0x03) != (result & 0x03)) {
+			setPreVar((result & 0x03));
+		}
+	}
 
 	setZ(z);
 
@@ -205,16 +260,30 @@ void comf(int data) {
 
 	int z;
 
-	int comp = ~reg; //Bilde Complement
-	z = (comp == 0);
+	uint8_t result = ~reg; //Bilde Complement
+	z = (result == 0);
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
-		dataSpeicher[getRP0()][f] = comp;   // Speichere Comp im Register f
+		dataSpeicher[getRP0()][f] = result;   // Speichere Comp im Register f
+
+				//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = result;
+			dataSpeicher[1][f] = result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
-		wReg = comp;   // Führt die logische AND-Operation zwischen WREG und dem Register aus
+		wReg = result;  
 	}
 	setZ(z);
 
@@ -236,10 +305,24 @@ void decf (int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   // Speichere Comp im Register f
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
-		wReg = result;   // Führt die logische AND-Operation zwischen WREG und dem Register aus
+		wReg = result;   
 	}
 
 	setZ(z);
@@ -258,9 +341,25 @@ void decfsz(int data) {
 
 	int z = (result == 0);
 
+
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   // Speichere Comp im Register f
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -288,6 +387,20 @@ void incf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -312,7 +425,21 @@ void incfsz(int data) {
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
-		dataSpeicher[getRP0()][f] = result;  
+		dataSpeicher[getRP0()][f] = result; 
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 1, wird das Ergebnis in WREG geschrieben
 	{
@@ -346,6 +473,20 @@ void iorwf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -377,6 +518,19 @@ void movf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = reg;   // Speichere Wert von ´f im Register f
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)reg;
+			dataSpeicher[1][f] = (uint8_t)reg;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (reg & 0x03)) {
+				setPreVar((reg & 0x03));
+			}
+		}
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -393,8 +547,23 @@ void movwf(int data) {
 	takte += 4;
 
 	uint8_t f = 0x007f & data; // Register Pfad
+	uint8_t reg = dataSpeicher[getRP0()][f];
+	uint8_t result = wReg;
 
-	dataSpeicher[getRP0()][f] = wReg;
+	dataSpeicher[getRP0()][f] = result;
+
+	//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+	if (f == 3) {
+		dataSpeicher[0][f] = result;
+		dataSpeicher[1][f] = result;
+	}
+
+	// Prüfe ob prescaler bits verändert wurden
+	if (f == 1 && getRP0() == 1) {
+		if ((reg & 0x03) != (result & 0x03)) {
+			setPreVar((result & 0x03));
+		}
+	}
 
 }
 
@@ -426,6 +595,20 @@ void rlf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -461,6 +644,20 @@ void rrf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -510,6 +707,20 @@ void subwf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = (uint8_t)result;   // Speichert das Ergebnis im Register
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -540,6 +751,20 @@ void swapf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = (uint8_t)result;   // Speichert das Ergebnis im Register
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -566,6 +791,20 @@ void xorwf(int data) {
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
 		dataSpeicher[getRP0()][f] = result;   // Speichert das Ergebnis im Register
+
+		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+		if (f == 3) {
+			dataSpeicher[0][f] = (uint8_t)result;
+			dataSpeicher[1][f] = (uint8_t)result;
+		}
+
+		// Prüfe ob prescaler bits verändert wurden
+		if (f == 1 && getRP0() == 1) {
+			if ((reg & 0x03) != (result & 0x03)) {
+				setPreVar((result & 0x03));
+			}
+		}
+
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -586,28 +825,31 @@ void bcf(int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
 	uint8_t reg;
+	uint8_t result;
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
 
+	int bank = getRP0();
 	if (f == 0x00) {
-
-		// indirekte adressierung
-
-		int bank = (f & 0xf0) > 0;
-		int fsr = getFSR() & 0x0f;
-		reg = dataSpeicher[bank][fsr];
-		reg &= ~(1u << b); //löschen des bten bits mit komplement und UND
-		dataSpeicher[bank][fsr] = reg; // Speichere ergebniss im register 
-
-	}
-	else {
-
+		// indirekte Adressierung
+		bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+		f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
+	} else {
 		// direkte Adressierung
-		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
-		reg &= ~(1u << b); //löschen des bten bits mit komplement und UND
-		dataSpeicher[getRP0()][f] = reg;
-
 	}
+
+	reg = dataSpeicher[bank][f]; // Reg an Stelle f inhalt
+	// Führe Operation aus
+	result = reg & ~(1u << b); //löschen des bten bits mit komplement und UND
+
+	// Prüfe ob prescaler bits verändert wurden
+	if (f == 1 && getRP0() == 1) {
+		if ((reg & 0x03) != (result & 0x03)) {
+			setPreVar((result & 0x03));
+		}
+	}
+
+	dataSpeicher[bank][f] = reg; // Speichere ergebniss im register 
 
 	takte += 4;
 }
@@ -619,29 +861,33 @@ void bsf(int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t b = 0x0380 & data;
 	uint8_t reg;
+	uint8_t result;
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
 
+	int bank = getRP0();
+
 	if (f == 0x00) {
-
-		// indirekte adressierung
-
-		int bank = (f & 0xf0) > 0;
-		int fsr = getFSR() & 0x0f;
-		reg = dataSpeicher[bank][fsr];
-
-		reg |= (1u << b); //setzen des bten bits: mit UND
-		dataSpeicher[bank][fsr] = reg; // Speichere ergebniss im register 
-
+		// indirekte Adressierung
+		bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+		f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
 	}
 	else {
-
 		// direkte Adressierung
-		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
-		reg |= (1u << b); //setzen des bten bits: mit UND
-		dataSpeicher[getRP0()][f] = reg;
-
 	}
+
+	reg = dataSpeicher[bank][f]; // Reg an Stelle f inhalt
+	// Führe Operation aus
+	result = reg | (1u << b); //setzen des bten bits: mit oder
+
+	// Prüfe ob prescaler bits verändert wurden
+	if (f == 1 && getRP0() == 1) {
+		if ((reg & 0x03) != (result & 0x03)) {
+			setPreVar((result & 0x03));
+		}
+	}
+
+	dataSpeicher[bank][f] = reg; // Speichere ergebniss im register 
 
 	takte += 4;
 }
@@ -654,24 +900,20 @@ void btfsc(int data) {
 	uint8_t b = 0x0380 & data;
 	uint8_t reg;
 
-	// register ermitteln
+	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
+
+	int bank = getRP0();
+
 	if (f == 0x00) {
-
-		// indirekte adressierung
-
-		int bank = (f & 0xf0) > 0;
-		int fsr = getFSR() & 0x0f;
-		reg = dataSpeicher[bank][fsr];
-
+		// indirekte Adressierung
+		bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+		f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
 	}
 	else {
-
 		// direkte Adressierung
-		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
-		reg |= (1u << b); //setzen des bten bits: mit UND
-		dataSpeicher[getRP0()][f] = reg;
-
 	}
+
+	reg = dataSpeicher[bank][f]; // Reg an Stelle f inhalt
 
 	if ((reg & b) > 0) {
 		// bit b in reg an stelle f = 1 -> do nothing + next befehl
@@ -695,26 +937,20 @@ void btfss(int data) {
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
 
-	// register ermitteln
+	int bank = getRP0();
+
 	if (f == 0x00) {
-
-		// indirekte adressierung
-
-		int bank = (f & 0xf0) > 0;
-		int fsr = getFSR() & 0x0f;
-		reg = dataSpeicher[bank][fsr];
-
+		// indirekte Adressierung
+		bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+		f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
 	}
 	else {
-
 		// direkte Adressierung
-		reg = dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
-		reg |= (1u << b); //setzen des bten bits: mit UND
-		dataSpeicher[getRP0()][f] = reg;
-
 	}
 
-	if ((f & b) == 0) {
+	reg = dataSpeicher[bank][f]; // Reg an Stelle f inhalt
+
+	if ((reg & b) == 0) {
 		// bit b in f = 0-> do nothing + next befehl
 	}
 	else {
@@ -727,9 +963,6 @@ void btfss(int data) {
 	takte += 4;
 
 }
-
-
-
 
 
 void addlw(int data) {
@@ -806,7 +1039,7 @@ void call(int data) {
 
 	// First, return address (PC + 1) is pushed onto the stack.
 
-	pushStack(progZeiger+1);
+	pushStack(progZeiger);
 	cout << "stack[0]: " << stack[0] << "\n";
 
 	// The eleven bit immediate address is loaded into PC bits <10:0>.
@@ -845,7 +1078,6 @@ void call(int data) {
 	cout <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
 
 	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
-	progZeiger--;
 
 	takte += 8;
 
@@ -864,7 +1096,7 @@ void clrwdt(int data) {
 	*/
 	
 	wdt = 0x00;
-	wdtPre = 0;
+	pre = 0;
 
 	setTO(1);
 	setPD(1);
@@ -917,9 +1149,6 @@ void picGoto(int data) {
 
 	}
 
-	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
-	progZeiger--;
-
 	takte += 8;
 
 }
@@ -966,8 +1195,6 @@ void retfie(int data) {
 	// Rückkehr aus der Interruptroutine, setzte GIE
 
 	progZeiger = popStack();
-	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
-	progZeiger--;
 
 	setGIE(1);
 
@@ -992,8 +1219,6 @@ void retlw(int data) {
 	wReg = k;
 
 	progZeiger = popStack();
-	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
-	progZeiger--;
 
 	takte += 8;
 }
@@ -1011,8 +1236,6 @@ void picReturn(int data) {
 	*/
 
 	progZeiger = popStack();
-	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
-	progZeiger--;
 
 	takte += 8;
 }
@@ -1026,7 +1249,7 @@ void sleep(int data) {
 	setTO(1);
 
 	wdt = 0;
-	wdtPre = 0;
+	pre = 0;
 
 	takte += 4;
 
@@ -1111,15 +1334,11 @@ void execBefehl() {
 	cout << "execBefehl aufgerufen\n";
 	//befehl an stelle des programmzählers erhalten
 	int befehl = progSpeicher[progZeiger];
-	// erhaltenen befehl decoden
+	
+	// erhaltenen befehl decoden und ausführen
 	decode(befehl);
 	
-	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
-	progZeiger++;
-	if (progZeiger == 1024) progZeiger = 0;
-	setPCL(progZeiger & 0xff);
-
-	progTime += (takte / quarzTakt); // progTime in mikrosekunden
+	progTime = (takte / quarzTakt); // progTime in mikrosekunden
 
 	syncDataSpeicher();
 
@@ -1155,4 +1374,63 @@ void pushStack(int wert) {
 	stack[0] = wert;
 
 }
+
+void ckeckInterrupt() {
+
+	if(getGIE()) {
+
+		if ((getT0IE() && getT0IF()) || (getINTE() && getINTF()) || (getRBIE() && getRBIF())) {
+
+			pushStack(progZeiger);
+			progZeiger = 0x0004;
+			setGIE(0);
+
+		}
+
+	}
+
+
+}
+
+void setTimer() {
+
+	//quelle für timer(option->clock source)
+	if (getTOCS() == 0) {
+		// erhöhe Timer
+		dataSpeicher[0][1]++;
+		if (dataSpeicher[0][1] == 0) {
+			setT0IF(1);
+		}
+	}
+	else {
+		//vorteiler bei timer psa?
+		if (getPSA() == 0) {
+			//erhöhe vorteiler(als 	rückwärtszähler)
+			
+				if (pre != 0) {
+
+					pre--;
+
+				}
+				else {
+					// erhöhe Timer wenn pre == 0
+					dataSpeicher[0][1]++;
+					if (dataSpeicher[0][1] == 0) {
+						setT0IF(1);
+					}
+					// setze prescaler zurück
+					pre = getPS();
+				}
+		}
+		else {
+			// erhöhe Timer
+			dataSpeicher[0][1]++;
+			if (dataSpeicher[0][1] == 0) {
+				setT0IF(1);
+			}
+		}
+	}
+}
+
+
 

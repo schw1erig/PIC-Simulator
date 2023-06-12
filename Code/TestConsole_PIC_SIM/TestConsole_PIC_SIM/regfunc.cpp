@@ -115,49 +115,49 @@ void setRBIF(int wert) {
 }
 
 //----
-int getGIE(int wert) {
+int getGIE() {
 
 	return getINTCON(0x80);
 
 }
 
-int getEEIE(int wert) {
+int getEEIE() {
 
 	return getINTCON(0x40);
 
 }
 
-int getT0IE(int wert) {
+int getT0IE() {
 
 	return getINTCON(0x20);
 
 }
 
-int getINTE(int wert) {
+int getINTE() {
 
 	return getINTCON(0x10);
 
 }
 
-int getRBIE(int wert) {
+int getRBIE() {
 
 	return getINTCON(0x08);
 
 }
 
-int getT0IF(int wert) {
+int getT0IF() {
 
 	return getINTCON(0x04);
 
 }
 
-int getINTF(int wert) {
+int getINTF() {
 
 	return getINTCON(0x02);
 
 }
 
-int getRBIF(int wert) {
+int getRBIF() {
 
 	return getINTCON(0x01);
 
@@ -192,6 +192,55 @@ void setINTCON(uint8_t maske, int wert) {
 
 }
 
+//-------------------------------------------------
+// Option reg functions
+
+void setPreVar(int wert) {
+	if (getPSA() == 0) {
+		//pre an timer
+		switch(wert) {
+		case 0: pre = 2; break;
+		case 1: pre = 4; break;
+		case 2: pre = 8; break;
+		case 3: pre = 16; break;
+		case 4: pre = 32; break;
+		case 5: pre = 64; break;
+		case 6: pre = 128; break;
+		case 7: pre = 256; break;
+		default: break;
+		}
+	}
+	else {
+		// pre an watchdog
+		switch (wert) {
+		case 0: pre = 1; break;
+		case 1: pre = 2; break;
+		case 2: pre = 4; break;
+		case 3: pre = 8; break;
+		case 4: pre = 16; break;
+		case 5: pre = 32; break;
+		case 6: pre = 64; break;
+		case 7: pre = 128; break;
+		default: break;
+		}
+	}
+}
+
+int getTOCS() {
+	return 0;
+}
+int getPSA() {
+	return 0;
+}
+int getPS() {
+	return 0;
+}
+int getOption(uint8_t maske) {
+	return 0;
+}
+void setOption(uint8_t maske, int wert) {
+
+}
 
 
 //------------------------------------------------

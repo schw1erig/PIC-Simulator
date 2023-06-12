@@ -55,3 +55,7 @@ void execBefehl();
 
 int popStack();
 void pushStack(int wert);
+
+void ckeckInterrupt();
+
+void setTimer();
