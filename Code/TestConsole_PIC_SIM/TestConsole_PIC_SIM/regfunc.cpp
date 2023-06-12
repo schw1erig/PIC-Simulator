@@ -227,18 +227,33 @@ void setPreVar(int wert) {
 }
 
 int getTOCS() {
-	return 0;
+	return getOption(0x20);
 }
 int getPSA() {
-	return 0;
+	return getOption(0x08);
 }
 int getPS() {
-	return 0;
+	return (4 * (getOption(0x04)) + (2 * getOption(0x02)) + (1 * getOption(0x01)));
 }
 int getOption(uint8_t maske) {
-	return 0;
+
+	// lese option aus dem Datenspeicher (da status in beiden Bänken gleich eigentlich unnötig)
+	uint8_t reg = dataSpeicher[1][1];
+	//cout << "getoption called: Maske: " << (int) maske << "ergebnis: " << ((reg & maske) > 0) << "\n";
+	return ((reg & maske) > 0);
 }
 void setOption(uint8_t maske, int wert) {
+
+	uint8_t reg = dataSpeicher[1][1];
+
+	if (wert == 0) {
+		reg &= ~(maske);
+	}
+	else if (wert == 1) {
+		reg |= maske;
+	}
+
+	dataSpeicher[1][1] = reg;
 
 }
 

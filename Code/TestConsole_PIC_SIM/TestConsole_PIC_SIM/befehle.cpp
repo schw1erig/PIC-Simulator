@@ -108,8 +108,6 @@ void addwf(int data) {
 	int result;
 	int reg = (int)dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
 
-	takte += 4; // standard für benötigte Takte 
-
 	//DC berechnung
 	// DC: bei add: > 15 -> dc = 1, <= 15 -> dc = 0 ; sub: < 0 -> dc = 1, >= 0 -> dc  1
 
@@ -165,6 +163,8 @@ void addwf(int data) {
 	setC(c);
 	setDC(dc);
 	setZ(z);
+
+	takte += 4; // standard für benötigte Takte 
 
 }
 
@@ -1096,7 +1096,8 @@ void clrwdt(int data) {
 	*/
 	
 	wdt = 0x00;
-	pre = 0;
+	// prescaler zurücksetzen
+	setPreVar(getPS());
 
 	setTO(1);
 	setPD(1);
@@ -1332,15 +1333,30 @@ void xorlw(int data) {
 void execBefehl() {
 	cout << "\nZeile: (beginnend bei 1)" << dec << matchZeile[progZeiger] + 1 << "\n";
 	cout << "execBefehl aufgerufen\n";
+	
+	
+
 	//befehl an stelle des programmzählers erhalten
 	int befehl = progSpeicher[progZeiger];
 	
 	// erhaltenen befehl decoden und ausführen
 	decode(befehl);
 	
+	// vorherige Laufzeit speichern,
+	progTime_before = progTime;
+	//aktuelle Laufzeit bestimmen
 	progTime = (takte / quarzTakt); // progTime in mikrosekunden
+	//delta für den abgearbeiteten befehl berechnen
+	deltaTime = progTime - progTime_before;
+	// delta zu watchdog addieren
+	wdt += (deltaTime/1000); // convert time to milli seconds and add time to wdt
 
+	setTimer();
+	ckeckInterrupt();
 	syncDataSpeicher();
+	checkWatchdog();
+
+
 
 	// GUI aktualisieren
 	// refreshGUI();
@@ -1429,6 +1445,99 @@ void setTimer() {
 				setT0IF(1);
 			}
 		}
+	}
+}
+
+void checkWatchdog() {
+
+		/*
+		//vorteiler bei watchdog?
+	if (getPSA() == 1) {
+		//erhöhe vorteiler(als 	rückwärtszähler)
+
+		if (pre != 0) {
+			// Preskaler nicht abgelaufen
+			pre--;
+			// setze watchdog zurück
+			wdt = 0;
+
+		}
+		else {
+			// erhöhe wdt wenn pre == 0
+			wdt+= neededTime;
+			// setze prescaler zurück
+			pre = getPS();
+		}
+	}
+	else {
+		// erhöhe wdt 
+		wdt += neededTime;
+	}
+	 */
+
+	//vorteiler bei watchdog?
+	if (getPSA() == 1) {
+		setPreVar(getPS());
+		if (wdt >= (18 * pre)) {
+			// watchdog reset
+			// 
+			// init dataSpeicher
+			for (int i = 0; i < 127; i++) {
+				dataSpeicher[0][i] = 0;
+				dataSpeicher[1][i] = 0;
+			}
+
+			// Eingabe array mit default wert füllen
+			for (int i = 0; i < 1024; i++) {
+				prog[i] = "no";
+			}
+
+			progZeiger = 0;
+
+			// Bits im Option reg auf 1 setzen
+			dataSpeicher[1][1] = 0xff;
+
+			// TO auf 0, bei normalem power up TO = 1
+			setTO(0);
+
+
+		}
+		else {
+			// no watchdog reset
+
+		}
+	}
+	else {
+
+		if (wdt >= 18) {
+			// watchdog reset
+				// init dataSpeicher
+			for (int i = 0; i < 127; i++) {
+				dataSpeicher[0][i] = 0;
+				dataSpeicher[1][i] = 0;
+			}
+
+			// Eingabe array mit default wert füllen
+			for (int i = 0; i < 1024; i++) {
+				prog[i] = "no";
+			}
+
+			progZeiger = 0;
+
+			// Bits im Option reg auf 1 setzen
+			dataSpeicher[1][1] = 0xff;
+
+			// TO auf 0, bei normalem power up TO = 1
+			setTO(0);
+
+
+		}
+		else {
+			// no watchdog reset
+
+
+		}
+
 	}
 }
 

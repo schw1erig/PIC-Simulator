@@ -21,7 +21,7 @@ int matchZeile[1024];
 uint8_t wReg = 0x00;
 
 int wdt = 0; //Watchdog 
-int pre = 0; // Watchdog prescaler
+uint8_t pre = 0; // Watchdog prescaler
 
 
 uint8_t maskeC = 0x0001;
@@ -37,6 +37,8 @@ int stackZeiger = 0;
 
 int quarzTakt = 4;  // in MHZ
 int progTime = 0; // in Micro-Sekunden
+int deltaTime = 0; // in micro-sekunden
+int progTime_before = 0; // in micro-sekunden
 int takte = 0;
 
 
@@ -71,12 +73,8 @@ int main()
     // Eingelesenes Programm durchführen
     testProgAblauf();
 
-    /*
-    uint8_t test = 0;
-    uint8_t test2 = test - 1;
+    
 
-    cout << "Test: " << (int) test << ", Test2: " << (int) test2 << "\n";
-    */
 
     return 0;
 }

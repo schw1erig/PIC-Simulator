@@ -68,3 +68,10 @@ void testSyncDataSpeicher() {
 
 
 }
+
+void testSetPS() {
+
+    dataSpeicher[1][1] = 0;
+    cout << getPS() << "\n";
+
+}

@@ -20,7 +20,7 @@ extern int matchZeile[1024];
 extern uint8_t wReg;
 
 extern int wdt; //Watchdog 
-extern int pre; //  prescaler/vorteiler
+extern uint8_t pre; //  prescaler/vorteiler
 
 
 
@@ -38,3 +38,5 @@ extern int stackZeiger;
 extern int quarzTakt;
 extern int progTime;
 extern int takte;
+extern int deltaTime;
+extern int progTime_before;
