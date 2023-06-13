@@ -32,7 +32,8 @@ void testAddwf() {
 void testProgAblauf() {
 
     // Debug ausgabe des eingelesenen programms
-    cout << "\n\n\nBefehle: \n";
+    cout << "\n\n-----------------------------------------------------------------------------------------------------------";
+    cout << "\nBefehle: \n";
 
     while (progSpeicher[progZeiger] != -1) {
 

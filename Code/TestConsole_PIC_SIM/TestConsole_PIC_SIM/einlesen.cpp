@@ -6,6 +6,122 @@
 
 using namespace std;
 
+void resetPIC() {
+
+    // init dataSpeicher
+    for (int i = 0; i < 127; i++) {
+        dataSpeicher[0][i] = 0;
+        dataSpeicher[1][i] = 0;
+    }
+
+    // Eingabe array mit default wert füllen
+    for (int i = 0; i < 1024; i++) {
+        prog[i] = "no";
+    }
+
+    // init progSpeicher mit -1 um eindeutig zu erkenn en welche fleder leer sind
+    for (int i = 0; i < 1024; i++) {
+        progSpeicher[i] = -1;
+    }
+
+    // matchZeile array mit default wert füllen
+    for (int i = 0; i < 1024; i++) {
+        matchZeile[i] = NULL;
+    }
+
+    // init stack
+    for (int i = 0; i < 8; i++) {
+        stack[i] = 0;
+    }
+
+    // ProgZeiger reset
+    progZeiger = 0;
+
+    // Stack zeiger reset
+    stackZeiger = 0;
+
+    // Bits im Option reg auf 1 setzen
+    dataSpeicher[1][1] = 0xff;
+
+    // TO auf 0, bei normalem power up TO = 1
+    setTO(0);
+
+    // w Reg zurücksetzen
+    wReg = 0;
+    // Watchdog zurücksetzen
+    wdt = 0;
+    // Interne Vorteiler variable auf basis der PS bits setzen
+    setPreVar(getPS());
+
+    // Takte und Timings reset
+    quarzTakt = 4;
+    progTime = 0;
+    takte = 0;
+    deltaTime = 0;
+    progTime_before = 0;
+
+}
+
+void bootPIC() {
+
+    // init dataSpeicher
+    for (int i = 0; i < 127; i++) {
+        dataSpeicher[0][i] = 0x00;
+        dataSpeicher[1][i] = 0x00;
+    }
+
+    // Eingabe array mit default wert füllen
+    for (int i = 0; i < 1024; i++) {
+        prog[i] = "no";
+    }
+
+    // init progSpeicher mit -1 um eindeutig zu erkenn en welche fleder leer sind
+    for (int i = 0; i < 1024; i++) {
+        progSpeicher[i] = -1;
+    }
+
+    // matchZeile array mit default wert füllen
+    for (int i = 0; i < 1024; i++) {
+        matchZeile[i] = NULL;
+    }
+
+    // init stack
+    for (int i = 0; i < 8; i++) {
+        stack[i] = 0;
+    }
+
+    // ProgZeiger reset
+    progZeiger = 0;
+
+    // Stack zeiger reset
+    stackZeiger = 0;
+
+    // Bits im Option reg auf 1 setzen
+    dataSpeicher[1][1] = 0xff;
+
+    // PD und TO auf 1 bei Power on
+    setPD(1);
+    setTO(1);
+
+    // w Reg zurücksetzen
+    wReg = 0x00;
+    // Watchdog zurücksetzen
+    wdt = 0;
+    // Interne Vorteiler variable auf basis der PS bits setzen
+    setPreVar(getPS());
+
+    // Takte und Timings reset
+    quarzTakt = 4;
+    progTime = 0;
+    takte = 0;
+    deltaTime = 0;
+    progTime_before = 0;
+
+
+}
+
+
+
 void einlesen(string filename) {
 
     // Eingabe array mit default wert füllen

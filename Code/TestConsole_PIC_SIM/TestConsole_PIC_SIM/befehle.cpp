@@ -1342,6 +1342,8 @@ void execBefehl() {
 	// erhaltenen befehl decoden und ausführen
 	decode(befehl);
 	
+	syncDataSpeicher();
+
 	// vorherige Laufzeit speichern,
 	progTime_before = progTime;
 	//aktuelle Laufzeit bestimmen
@@ -1351,13 +1353,9 @@ void execBefehl() {
 	// delta zu watchdog addieren
 	wdt += (deltaTime/1000); // convert time to milli seconds and add time to wdt
 
+	checkWatchdog();
 	setTimer();
 	ckeckInterrupt();
-	syncDataSpeicher();
-	checkWatchdog();
-
-
-
 	// GUI aktualisieren
 	// refreshGUI();
 
@@ -1450,33 +1448,37 @@ void setTimer() {
 
 void checkWatchdog() {
 
-		/*
-		//vorteiler bei watchdog?
-	if (getPSA() == 1) {
-		//erhöhe vorteiler(als 	rückwärtszähler)
+	if (wdt > 18) {
+		// watchdog  abgelaufen?
+		if (getPSA() == 1) {
+			//vorteiler bei watchdog?
+			if (pre != 0) {
+				// Preskaler nicht abgelaufen
+				//erhöhe vorteiler(als 	rückwärtszähler)
+				pre--;
+				// setze watchdog zurück
+				wdt = 0;
+			}
+			else {
+				// watchdog mit pre, beide abgelaufen
+				// watchdog reset
+				resetPIC();
 
-		if (pre != 0) {
-			// Preskaler nicht abgelaufen
-			pre--;
-			// setze watchdog zurück
-			wdt = 0;
-
+			}
 		}
 		else {
-			// erhöhe wdt wenn pre == 0
-			wdt+= neededTime;
-			// setze prescaler zurück
-			pre = getPS();
+			// watchdog ohne pre abgelaufen
+			// watchdog reset
+			resetPIC();
 		}
 	}
 	else {
-		// erhöhe wdt 
-		wdt += neededTime;
+		// No Reset!!
 	}
-	 */
+
 
 	//vorteiler bei watchdog?
-	if (getPSA() == 1) {
+	/*if (getPSA() == 1) {
 		setPreVar(getPS());
 		if (wdt >= (18 * pre)) {
 			// watchdog reset
@@ -1538,8 +1540,7 @@ void checkWatchdog() {
 
 		}
 
-	}
+	}*/
 }
-
 
 

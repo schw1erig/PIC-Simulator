@@ -6,6 +6,8 @@
 
 using namespace std;
 
+// Programmpfad
+extern string filename;
 // Programmspeicher
 extern int progSpeicher[1024];
 // Ram 1
@@ -19,7 +21,7 @@ extern int matchZeile[1024];
 
 extern uint8_t wReg;
 
-extern int wdt; //Watchdog 
+extern double wdt; //Watchdog 
 extern uint8_t pre; //  prescaler/vorteiler
 
 
