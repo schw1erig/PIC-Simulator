@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     gui_set_Console_field("hallo was geht");
     gui_set_dataSpeicher_table(2,3,"hallo");
     gui_set_pin_table(2,3,"haLLO");
-
+    gui_set_stackpointer_Label(12);
 }
 
 MainWindow::~MainWindow()
@@ -86,6 +86,7 @@ void MainWindow::gui_set_Console_field(std::string ConsoleOutput)
     ui->Console_Field->insertPlainText("\n");
     ui->Console_Field->insertPlainText(qstr);
 }
+
 
 void MainWindow::gui_set_dataSpeicher_table(int row, int column, std::string dataSpeicherOutput)
 {
@@ -111,52 +112,52 @@ void MainWindow::gui_set_quarzfrequenz_Label(int quarztakt)
     ui->quarzfrequenz_Label->setText(to_QString(quarztakt));
 }
 
-void MainWindow::gui_set_laufzeit_Label()
+void MainWindow::gui_set_laufzeit_Label(int laufzeit)
 {
     ui->laufzeit_Label->setText(to_QString(laufzeit));
 }
 
-void MainWindow::gui_set_wReg_Label()
+void MainWindow::gui_set_wReg_Label(int wReg)
 {
     ui->wReg_Label->setText(to_QString(wReg));
 }
 
-void MainWindow::gui_set_fsr_Label()
+void MainWindow::gui_set_fsr_Label(int fsr)
 {
     ui->fsr_Label->setText(to_QString(fsr));
 }
 
-void MainWindow::gui_set_pcl_Label()
+void MainWindow::gui_set_pcl_Label(int pcl)
 {
     ui->pcl_Label->setText(to_QString(pcl));
 }
 
-void MainWindow::gui_set_pcLath_Label()
+void MainWindow::gui_set_pcLath_Label(int pcl)
 {
     ui->pcLath_Label->setText(to_QString(pcLath));
 }
 
-void MainWindow::gui_set_status_Label()
+void MainWindow::gui_set_status_Label(int status)
 {
     ui->status_Label->setText(to_QString(status));
 }
 
-void MainWindow::gui_set_pc_Label()
+void MainWindow::gui_set_pc_Label(int pc)
 {
     ui->pc_Label->setText(to_QString(pc));
 }
 
-void MainWindow::gui_set_stackpointer_Label()
+void MainWindow::gui_set_stackpointer_Label(int stackpointer)
 {
     ui->stackpointer_Label->setText(to_QString(stackpointer));
 }
 
-void MainWindow::gui_set_vt_Label()
+void MainWindow::gui_set_vt_Label(int vt)
 {
     ui->vt_Label->setText(to_QString(vt));
 }
 
-void MainWindow::gui_set_wdt_Label()
+void MainWindow::gui_set_wdt_Label(int wdt)
 {
     ui->wdt_Label->setText(to_QString(wdt));
 }
@@ -166,138 +167,151 @@ bool MainWindow::gui_check_wdt_aktiv()
     return 0;
 }
 
-void MainWindow::gui_set_irp_Label()
+void MainWindow::gui_set_irp_Label(int irp)
 {
     ui->irp_Label->setText(to_QString(irp));
 }
 
-void MainWindow::gui_set_rp1_Label()
+void MainWindow::gui_set_rp1_Label(int rp1)
 {
     ui->rp1_Label->setText(to_QString(rp1));
 }
 
-void MainWindow::gui_set_rp0_Label()
+void MainWindow::gui_set_rp0_Label(int rp0)
 {
     ui->rp0_Label->setText(to_QString(rp0));
 }
 
-void MainWindow::gui_set_t0_Label()
+void MainWindow::gui_set_t0_Label(int t0)
 {
     ui->t0_Label->setText(to_QString(t0));
 }
 
-void MainWindow::gui_set_pd_Label()
+void MainWindow::gui_set_pd_Label(int pd)
 {
     ui->pd_Label->setText(to_QString(pd));
 }
 
-void MainWindow::gui_set_z_Label()
+void MainWindow::gui_set_z_Label(int z)
 {
     ui->z_Label->setText(to_QString(z));
 }
 
-void MainWindow::gui_set_dc_Label()
+void MainWindow::gui_set_dc_Label(int dc)
 {
     ui->dc_Label->setText(to_QString(dc));
 }
 
-void MainWindow::gui_set_c_Label()
+void MainWindow::gui_set_c_Label(int c)
 {
     ui->c_Label->setText(to_QString(c));
 }
 
-void MainWindow::gui_set_option_Label()
+void MainWindow::gui_set_option_Label(int option)
 {
 ui->option_Label->setText(to_QString(option));
 }
 
-void MainWindow::gui_set_rbp_Label()
+void MainWindow::gui_set_rbp_Label(int rbp)
 {
     ui->rbp_Label->setText(to_QString(rbp));
 }
 
-void MainWindow::gui_set_intedg_Label()
+void MainWindow::gui_set_intedg_Label(int intedg)
 {
     ui->intedg_Label->setText(to_QString(intedg));
 }
 
-void MainWindow::gui_set_t0cs_Label()
+void MainWindow::gui_set_t0cs_Label(int t0cs)
 {
     ui->t0cs_Label->setText(to_QString(t0cs));
 }
 
-void MainWindow::gui_set_t0se_Label()
+void MainWindow::gui_set_t0se_Label(int t0se)
 {
     ui->t0se_Label->setText(to_QString(t0se));
 }
 
-void MainWindow::gui_set_psa_Label()
+void MainWindow::gui_set_psa_Label(int psa)
 {
     ui->psa_Label->setText(to_QString(psa));
 }
 
-void MainWindow::gui_set_ps2_Label()
+void MainWindow::gui_set_ps2_Label(int ps2)
 {
     ui->ps2_Label->setText(to_QString(ps2));
 }
 
-void MainWindow::gui_set_ps1_Label()
+void MainWindow::gui_set_ps1_Label(int ps1)
 {
     ui->ps1_Label->setText(to_QString(ps1));
 }
 
-void MainWindow::gui_set_ps0_Label()
+void MainWindow::gui_set_ps0_Label(int ps0)
 {
     ui->ps0_Label->setText(to_QString(ps0));
 }
 
-void MainWindow::gui_set_intcon_Label()
+void MainWindow::gui_set_intcon_Label(int intcon)
 {
     ui->intcon_Label->setText(to_QString(intcon));
 }
 
-void MainWindow::gui_set_gie_Label()
+void MainWindow::gui_set_gie_Label(int gie)
 {
     ui->gie_Label->setText(to_QString(gie));
 }
 
-void MainWindow::gui_set_pie_Label()
+void MainWindow::gui_set_pie_Label(int pie)
 {
     ui->pie_Label->setText(to_QString(pie));
 }
 
-void MainWindow::gui_set_t0ie_Label()
+void MainWindow::gui_set_t0ie_Label(int t0ie)
 {
     ui->t0ie_Label->setText(to_QString(t0ie));
 }
 
-void MainWindow::gui_set_inte_Label()
+void MainWindow::gui_set_inte_Label(int inte)
 {
     ui->inte_Label->setText(to_QString(inte));
 }
 
-void MainWindow::gui_set_rbie_Label()
+void MainWindow::gui_set_rbie_Label(int rbie)
 {
     ui->rbie_Label->setText(to_QString(rbie));
 }
 
-void MainWindow::gui_set_t0if_Label()
+void MainWindow::gui_set_t0if_Label(int t0if)
 {
     ui->t0if_Label->setText(to_QString(t0if));
 }
 
-void MainWindow::gui_set_intf_Label()
+void MainWindow::gui_set_intf_Label(int intf)
 {
     ui->intf_Label->setText(to_QString(intf));
 }
 
-void MainWindow::gui_set_rbif_Label()
+void MainWindow::gui_set_rbif_Label(int rbif)
 {
     ui->rbif_Label->setText(to_QString(rbif));
+}
+
+
+
+
+
+void MainWindow::gui_set_Console_field2(QString file_name)
+{
+
+    ui->Console_Field->moveCursor(QTextCursor::End);
+    ui->Console_Field->insertPlainText("\n");
+    ui->Console_Field->insertPlainText(file_name);
 }
 
 void MainWindow::on_actionLaden_triggered()
 {
     QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
+    gui_set_Console_field2(file_name);
 }
 
