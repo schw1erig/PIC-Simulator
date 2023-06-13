@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,14 +24,14 @@ private slots:
     QString to_QString(int);
 
     //Box:Konsole
-    void gui_set_Console_field();
+    void gui_set_Console_field(std::string ConsoleOutput);
 
     //Box:Register
-    void gui_set_dataSpeicher_table(int row, int column);
+    void gui_set_dataSpeicher_table(int row, int column, std::string dataSpeicherOutput);
     void gui_get_dataSpeicher_table();
 
     //Box:Pins
-    void gui_set_pin_table();
+    void gui_set_pin_table(int row, int column, std::string PinTableChange);
 
     //Box:Quarzfrequenz
     void gui_set_quarzfrequenz_Label(int quarztakt);
@@ -94,6 +95,8 @@ private slots:
 
 
 
+
+    void on_actionLaden_triggered();
 
 private:
     Ui::MainWindow *ui;

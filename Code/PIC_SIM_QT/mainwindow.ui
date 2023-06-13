@@ -2278,7 +2278,7 @@ d
      <x>0</x>
      <y>0</y>
      <width>997</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDatei">
@@ -2291,6 +2291,11 @@ d
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLaden">
+   <property name="text">
+    <string>Laden</string>
+   </property>
+  </action>
+  <action name="actionLaden_2">
    <property name="text">
     <string>Laden</string>
    </property>

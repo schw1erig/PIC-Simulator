@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <string>
+#include <QFileDialog>
 using namespace std;
 
 int quarztakt;
@@ -40,6 +41,7 @@ int rbie;
 int t0if;
 int intf;
 int rbif;
+int ConsoleOutput;
 
 
 
@@ -55,7 +57,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Console_Field->moveCursor (QTextCursor::End);
     ui->Console_Field->insertPlainText ("Hallo ich sollte noch weiter unten sein");
     ui->Console_Field->moveCursor (QTextCursor::End);
+     ui->Console_Field->insertPlainText ("\nHallo ich sollte noch weiter unten sein");
+      ui->Console_Field->insertPlainText ("\nHallo ich sollte noch weiter unten sein");
     gui_set_quarzfrequenz_Label(100);
+    gui_set_Console_field("hallo was geht");
+    gui_set_Console_field("hallo was geht");
+    gui_set_dataSpeicher_table(2,3,"hallo");
+    gui_set_pin_table(2,3,"haLLO");
+
 }
 
 MainWindow::~MainWindow()
@@ -69,14 +78,20 @@ std:string s_input = std::to_string(input);
     return q_input;
 }
 
-void MainWindow::gui_set_Console_field()
+void MainWindow::gui_set_Console_field(std::string ConsoleOutput)
 {
-
+    std::string str = ConsoleOutput;
+    QString qstr = QString::fromStdString(str);
+    ui->Console_Field->moveCursor(QTextCursor::End);
+    ui->Console_Field->insertPlainText("\n");
+    ui->Console_Field->insertPlainText(qstr);
 }
 
-void MainWindow::gui_set_dataSpeicher_table(int row, int column)
+void MainWindow::gui_set_dataSpeicher_table(int row, int column, std::string dataSpeicherOutput)
 {
-
+    std::string str = dataSpeicherOutput;
+    QString qstr = QString::fromStdString(str);
+    ui->dataSpeicher_table->setItem(row, column, new QTableWidgetItem(qstr));
 }
 
 void MainWindow::gui_get_dataSpeicher_table()
@@ -84,9 +99,11 @@ void MainWindow::gui_get_dataSpeicher_table()
 
 }
 
-void MainWindow::gui_set_pin_table()
+void MainWindow::gui_set_pin_table(int row, int column, std::string PinTableChange)
 {
-
+    std::string str = PinTableChange;
+    QString qstr = QString::fromStdString(str);
+    ui->pin_table->setItem(row, column, new QTableWidgetItem(qstr));
 }
 
 void MainWindow::gui_set_quarzfrequenz_Label(int quarztakt)
@@ -279,7 +296,8 @@ void MainWindow::gui_set_rbif_Label()
     ui->rbif_Label->setText(to_QString(rbif));
 }
 
-
-
-
+void MainWindow::on_actionLaden_triggered()
+{
+    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
+}
 
