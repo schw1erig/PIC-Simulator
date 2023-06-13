@@ -92,11 +92,11 @@ private slots:
     void gui_set_rbif_Label(int rbif);
 
     //Menüband
-    void on_actionLaden_triggered();
+    void gui_actionLaden_triggered();
 
-    void on_pushButton_3_clicked();
+    void gui_go_button_clicked();
 
-    void on_pin_table_cellActivated(int row, int column);
+    void gui_pin_table_checkbox(int row, int column);
 
 
 

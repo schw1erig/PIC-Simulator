@@ -41,7 +41,7 @@ int rbie;
 int t0if;
 int intf;
 int rbif;
-int ConsoleOutput;
+std::string ConsoleOutput;
 
 
 
@@ -307,15 +307,13 @@ void MainWindow::gui_set_Console_field2(QString file_name)
     ui->Console_Field->insertPlainText(file_name);
 }
 
-void MainWindow::on_actionLaden_triggered()
+void MainWindow::gui_actionLaden_triggered()
 {
     QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
     gui_set_Console_field2(file_name);
 }
-void MainWindow::pin_table_checkbox(int row, int column)
+void MainWindow::gui_pin_table_checkbox(int row, int column)
 {
-    QTableWidgetItem *checkBoxState = ui->pin_table->item(row, column);
-
     if(ui->pin_table->item(row,column)->checkState())
     {
         ui->Console_Field->moveCursor(QTextCursor::End);
@@ -332,10 +330,10 @@ void MainWindow::pin_table_checkbox(int row, int column)
 }
 
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::gui_go_button_clicked()
 {
     gui_check_wdt_aktiv();
-    pin_table_checkbox(2,1);
+    gui_pin_table_checkbox(2,1);
 }
 
 

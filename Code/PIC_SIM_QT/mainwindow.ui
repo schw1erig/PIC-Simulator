@@ -1243,7 +1243,7 @@
       <string>Ignore (F7)</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="go_button">
      <property name="geometry">
       <rect>
        <x>10</x>
