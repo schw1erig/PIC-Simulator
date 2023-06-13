@@ -14,20 +14,11 @@ void resetPIC() {
         dataSpeicher[1][i] = 0;
     }
 
-    // Eingabe array mit default wert füllen
-    for (int i = 0; i < 1024; i++) {
-        prog[i] = "no";
-    }
+    // TO auf 0, bei normalem power up TO = 1
+    setTO(0);
 
-    // init progSpeicher mit -1 um eindeutig zu erkenn en welche fleder leer sind
-    for (int i = 0; i < 1024; i++) {
-        progSpeicher[i] = -1;
-    }
-
-    // matchZeile array mit default wert füllen
-    for (int i = 0; i < 1024; i++) {
-        matchZeile[i] = NULL;
-    }
+    // Bits im Option reg auf 1 setzen
+    dataSpeicher[1][1] = 0xff;
 
     // init stack
     for (int i = 0; i < 8; i++) {
@@ -39,12 +30,6 @@ void resetPIC() {
 
     // Stack zeiger reset
     stackZeiger = 0;
-
-    // Bits im Option reg auf 1 setzen
-    dataSpeicher[1][1] = 0xff;
-
-    // TO auf 0, bei normalem power up TO = 1
-    setTO(0);
 
     // w Reg zurücksetzen
     wReg = 0;
