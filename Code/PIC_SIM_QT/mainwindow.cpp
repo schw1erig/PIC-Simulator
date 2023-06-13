@@ -331,7 +331,7 @@ void MainWindow::gui_pin_table_checkbox(int row, int column)
 }
 
 
-void MainWindow::gui_go_button_clicked()
+void MainWindow::on_go_button_clicked()
 {
     gui_check_wdt_aktiv();
     gui_pin_table_checkbox(2,1);

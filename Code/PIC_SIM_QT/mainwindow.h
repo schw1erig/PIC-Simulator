@@ -94,7 +94,7 @@ private slots:
     //Menüband
     void gui_actionLaden_triggered();
 
-    void gui_go_button_clicked();
+    void on_go_button_clicked();
 
     void gui_pin_table_checkbox(int row, int column);
 
