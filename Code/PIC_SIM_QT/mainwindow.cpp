@@ -160,7 +160,7 @@ void MainWindow::gui_check_wdt_aktiv()
     else{
         ui->Console_Field->moveCursor(QTextCursor::End);
         ui->Console_Field->insertPlainText("\n");
-        ui->Console_Field->insertPlainText("WDT is not checked");
+        ui->Console_Field->insertPlainText("WDT is unchecked");
     }
 
 }
@@ -312,6 +312,7 @@ void MainWindow::gui_actionLaden_triggered()
     QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
     gui_set_Console_field2(file_name);
 }
+
 void MainWindow::gui_pin_table_checkbox(int row, int column)
 {
     if(ui->pin_table->item(row,column)->checkState())
