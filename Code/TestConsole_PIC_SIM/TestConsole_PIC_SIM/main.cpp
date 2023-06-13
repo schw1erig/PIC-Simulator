@@ -54,7 +54,8 @@ int main()
     // Befehle aus dem Programm extrahieren
     extractBefehle();
     // Eingelesenes Programm durchführen
-    //testProgAblauf();
+    
+    testProgAblauf();
 
     cout << "pre vorher: " << (int) pre << "\n";
     testAddwf();
