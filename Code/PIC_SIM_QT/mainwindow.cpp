@@ -2,11 +2,13 @@
 #include "./ui_mainwindow.h"
 #include <string>
 #include <QFileDialog>
+
+#include "common.h"
+
 using namespace std;
 
 int quarztakt;
 int laufzeit;
-int wReg;
 int fsr;
 int pcl;
 int pcLath;
@@ -14,7 +16,7 @@ int status;
 int pc;
 int stackpointer;
 int vt;
-int wdt;
+//int wdt;
 int irp;
 int rp1;
 int rp0;
@@ -41,18 +43,22 @@ int rbie;
 int t0if;
 int intf;
 int rbif;
+
 std::string ConsoleOutput;
 
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+: QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->Console_Field->setReadOnly(true);
 
+    fillBox();
 }
+
+
 
 MainWindow::~MainWindow()
 {
@@ -307,10 +313,22 @@ void MainWindow::gui_set_Console_field2(QString file_name)
     ui->Console_Field->insertPlainText(file_name);
 }
 
-void MainWindow::gui_actionLaden_triggered()
+void MainWindow::on_actionLaden_triggered()
 {
-    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
-    gui_set_Console_field2(file_name);
+    qDebug() << "laden triggered";
+    //QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
+    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "G:/Ausbildung/Git/PIC-Simulator/TestProg_PicSim_20210420");
+
+    qDebug() << file_name;
+    filename = file_name.toStdString();
+    qDebug() << filename;
+
+    bootPIC();
+    einlesen(filename);
+    fileAusgeben();
+    extractBefehle();
+    fillBox();
+
 }
 
 void MainWindow::gui_pin_table_checkbox(int row, int column)
@@ -333,8 +351,42 @@ void MainWindow::gui_pin_table_checkbox(int row, int column)
 
 void MainWindow::on_go_button_clicked()
 {
-    gui_check_wdt_aktiv();
-    gui_pin_table_checkbox(2,1);
+    qDebug() << "go clicked" ;
+    //testProgAblauf();
+    //gui_set_Console_field(to_string(wReg));
+    //gui_check_wdt_aktiv();
+    //gui_pin_table_checkbox(2,1);
+
+
+    execBefehl();
+    fillBox();
+
+
 }
 
+void MainWindow::fillBox() {
+
+    ui->Console_Field->clear();
+
+    for (int i = 0; i < 1024; i++) {
+        if (prog[i] != "no") {
+            if(i == matchZeile[progZeiger]) {
+                gui_set_Console_field("X" + prog[i]);
+            } else {
+                gui_set_Console_field("  " + prog[i]);
+            }
+
+        }
+    }
+}
+
+
+
+
+
+void MainWindow::on_reset_Button_clicked()
+{
+    resetPIC();
+    fillBox();
+}
 

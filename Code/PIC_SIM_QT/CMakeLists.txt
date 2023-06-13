@@ -19,6 +19,15 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+		befehle.cpp
+		befehle.h
+		common.h
+		einlesen.cpp
+		einlesen.h
+		regfunc.cpp
+		regfunc.h
+		test.cpp
+		test.h
         ${TS_FILES}
 )
 
