@@ -51,20 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->Console_Field->setReadOnly(true);
-    ui->Console_Field->moveCursor (QTextCursor::End);
-    ui->Console_Field->insertPlainText ("Hallo ich sollte unten sein\n");
-    ui->Console_Field->moveCursor (QTextCursor::End);
-    ui->Console_Field->moveCursor (QTextCursor::End);
-    ui->Console_Field->insertPlainText ("Hallo ich sollte noch weiter unten sein");
-    ui->Console_Field->moveCursor (QTextCursor::End);
-     ui->Console_Field->insertPlainText ("\nHallo ich sollte noch weiter unten sein");
-      ui->Console_Field->insertPlainText ("\nHallo ich sollte noch weiter unten sein");
-    gui_set_quarzfrequenz_Label(100);
-    gui_set_Console_field("hallo was geht");
-    gui_set_Console_field("hallo was geht");
-    gui_set_dataSpeicher_table(2,3,"hallo");
-    gui_set_pin_table(2,3,"haLLO");
-    gui_set_stackpointer_Label(12);
+
 }
 
 MainWindow::~MainWindow()
@@ -162,9 +149,20 @@ void MainWindow::gui_set_wdt_Label(int wdt)
     ui->wdt_Label->setText(to_QString(wdt));
 }
 
-bool MainWindow::gui_check_wdt_aktiv()
+void MainWindow::gui_check_wdt_aktiv()
 {
-    return 0;
+    if(ui->checkBox->isChecked())
+    {
+        ui->Console_Field->moveCursor(QTextCursor::End);
+        ui->Console_Field->insertPlainText("\n");
+        ui->Console_Field->insertPlainText("WDT is checked");
+    }
+    else{
+        ui->Console_Field->moveCursor(QTextCursor::End);
+        ui->Console_Field->insertPlainText("\n");
+        ui->Console_Field->insertPlainText("WDT is not checked");
+    }
+
 }
 
 void MainWindow::gui_set_irp_Label(int irp)
@@ -314,4 +312,30 @@ void MainWindow::on_actionLaden_triggered()
     QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
     gui_set_Console_field2(file_name);
 }
+void MainWindow::pin_table_checkbox(int row, int column)
+{
+    QTableWidgetItem *checkBoxState = ui->pin_table->item(row, column);
+
+    if(ui->pin_table->item(row,column)->checkState())
+    {
+        ui->Console_Field->moveCursor(QTextCursor::End);
+        ui->Console_Field->insertPlainText("\n");
+        ui->Console_Field->insertPlainText("is checked");
+    }
+    else
+    {
+        ui->Console_Field->moveCursor(QTextCursor::End);
+        ui->Console_Field->insertPlainText("\n");
+        ui->Console_Field->insertPlainText("is unchecked");
+
+    }
+}
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    gui_check_wdt_aktiv();
+    pin_table_checkbox(2,1);
+}
+
 

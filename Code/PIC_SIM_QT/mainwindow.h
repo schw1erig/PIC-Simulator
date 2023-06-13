@@ -32,6 +32,7 @@ private slots:
 
     //Box:Pins
     void gui_set_pin_table(int row, int column, std::string PinTableChange);
+    void pin_table_checkbox(int row, int column);
 
     //Box:Quarzfrequenz
     void gui_set_quarzfrequenz_Label(int quarztakt);
@@ -54,7 +55,7 @@ private slots:
     void gui_set_stackpointer_Label(int stackpointer);
     void gui_set_vt_Label(int vt);
     void gui_set_wdt_Label(int wdt);
-    bool gui_check_wdt_aktiv();
+    void gui_check_wdt_aktiv();
 
     //Box 1 unten links
     void gui_set_irp_Label(int irp);
@@ -92,6 +93,12 @@ private slots:
 
     //Menüband
     void on_actionLaden_triggered();
+
+    void on_pushButton_3_clicked();
+
+    void on_pin_table_cellActivated(int row, int column);
+
+
 
 private:
     Ui::MainWindow *ui;
