@@ -1,7 +1,11 @@
 #pragma once
 #include <iostream>
 
+uint8_t getRegPfad(uint8_t pfad);
+uint8_t getRegInhalt(uint8_t pfad);
+void setRegInhalt(uint8_t pfad, uint8_t result);
 
+//--------------
 void syncDataSpeicher();
 
 //----------

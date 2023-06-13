@@ -23,7 +23,7 @@ int matchZeile[1024];
 uint8_t wReg;
 
 double wdt; //Watchdog 
-uint8_t pre = 0; // Watchdog prescaler
+int pre = 0; // Watchdog prescaler
 
 int progZeiger;
 int stackZeiger;
@@ -54,7 +54,14 @@ int main()
     // Befehle aus dem Programm extrahieren
     extractBefehle();
     // Eingelesenes Programm durchführen
-    testProgAblauf();
+    //testProgAblauf();
+
+    cout << "pre vorher: " << (int) pre << "\n";
+    testAddwf();
+    cout << "pre danach: " << (int) pre << "\n";
+
+    //testSetStatus();
+
 
     return 0;
 }

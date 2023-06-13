@@ -5,6 +5,70 @@
 using namespace std;
 
 
+uint8_t getRegPfad(uint8_t pfad) {
+	// wahrscheinlich ünerflüssig
+	return pfad;
+
+}
+
+uint8_t getRegInhalt(uint8_t pfad) {
+
+	int bank = getRP0();
+	uint8_t f = 0;
+
+	// bestimme register, abhängig von direkter/indirekter addressierung
+	if (pfad == 0x00) {
+			// indirekte Adressierung
+			bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+			f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
+	} 
+	else {
+			f = pfad;
+	}
+	cout << "bank: " << bank << "\n";
+	return dataSpeicher[bank][f];
+
+}
+
+void setRegInhalt(uint8_t pfad, uint8_t result) {
+
+	int bank = getRP0();
+	uint8_t f = 0;
+	uint8_t curInhalt;
+
+	// bestimme register, abhängig von direkter/indirekter addressierung
+	if (pfad == 0x00) {
+		// indirekte Adressierung
+		bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+		f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
+	}
+	else {
+		f = pfad;
+	}
+	// aktuell gespeicherter wert abrufen
+	curInhalt = dataSpeicher[bank][f];
+
+	// Prüfe ob prescaler bits verändert wurden
+	if (f == 1 && getRP0() == 1) {
+		if ((curInhalt & 0x03) != (result & 0x03)) {
+			setPreVar((result & 0x03));
+		}
+	}
+
+	//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
+	if (f == 3) {
+		dataSpeicher[0][f] = result;
+		dataSpeicher[1][f] = result;
+	}
+	else {
+
+		// Speichere neuen wert im register
+		dataSpeicher[bank][f] = 0;
+		dataSpeicher[bank][f] = result;
+
+	}
+}
+
 
 void syncDataSpeicher() {
 
@@ -196,6 +260,7 @@ void setINTCON(uint8_t maske, int wert) {
 // Option reg functions
 
 void setPreVar(int wert) {
+	cout << "setPreVar aufgerufen\n";
 	if (getPSA() == 0) {
 		//pre an timer
 		switch(wert) {
@@ -264,7 +329,7 @@ void setOption(uint8_t maske, int wert) {
 int getStatus(uint8_t maske) {
 
 	// lese status aus dem aktuellen Datenspeicher (da status in beiden Bänken gleich eigentlich unnötig)
-	uint8_t status = dataSpeicher[(dataSpeicher[0][3] & maskeRP0)][3];
+	uint8_t status = dataSpeicher[0][3];
 
 	return ((status & maske) > 0);
 }
@@ -303,16 +368,11 @@ void setStatus(uint8_t maske, int wert) {
 
 	int bit = (status & maske) > 0;
 
-	if (bit == wert) {
-	}
-	else if (bit == 0 && wert == 0) {
+	if (wert == 0) {
 		status &= ~(maske);
 	}
-	else if (bit == 0 && wert == 1) {
+	else if (wert == 1) {
 		status |= maske;
-	}
-	else if (bit == 1 && wert == 0) {
-		status ^= maske;
 	}
 
 	dataSpeicher[0][3] = status;

@@ -106,8 +106,8 @@ void addwf(int data) {
 	int z = 0;
 	int dc = 0;
 	int result;
-	int reg = (int)dataSpeicher[getRP0()][f]; // Reg an Stelle f inhalt
-
+	int reg = (int)getRegInhalt(f); // Reg an Stelle f inhalt
+	cout << "Reg: " << reg << "\n";
 	//DC berechnung
 	// DC: bei add: > 15 -> dc = 1, <= 15 -> dc = 0 ; sub: < 0 -> dc = 1, >= 0 -> dc  1
 
@@ -129,31 +129,16 @@ void addwf(int data) {
 	// Speicherort ermittlen
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
-		
-		dataSpeicher[getRP0()][f] = (uint8_t)result;   // Speichert das Ergebnis im Register
-		
-		//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
-		if (f == 3) {
-			dataSpeicher[0][f] = (uint8_t)result;
-			dataSpeicher[1][f] = (uint8_t)result;
-		}
+		setRegInhalt(f, (uint8_t)result);
 
 		// PC setzen mit PCL und PClath ersetzen
 		if (f == 2) {
 
 			progZeiger = 0;
-			progZeiger |= (int) f;
-			int pcLath5Bit = (dataSpeicher[getRP0()][0x0A]) & (0x1f);
-			progZeiger |= (pcLath5Bit << 8);
-		}
-
-		// Prüfe ob prescaler bits verändert wurden
-		if (f == 1 && getRP0() == 1) {
-			if ((reg & 0x03) != (result & 0x03)) {
-				setPreVar((result & 0x03));
-			}
-		}
-			
+			progZeiger |= (uint8_t) result;
+			int pcLath5Bits = (dataSpeicher[getRP0()][0x0A]) & (0x1f);
+			progZeiger |= (pcLath5Bits << 8);
+		}			
 	}
 	else   // Wenn d = 0, wird das Ergebnis in WREG geschrieben
 	{
@@ -849,7 +834,7 @@ void bcf(int data) {
 		}
 	}
 
-	dataSpeicher[bank][f] = reg; // Speichere ergebniss im register 
+	dataSpeicher[bank][f] = result; // Speichere ergebniss im register 
 
 	takte += 4;
 }
@@ -887,7 +872,7 @@ void bsf(int data) {
 		}
 	}
 
-	dataSpeicher[bank][f] = reg; // Speichere ergebniss im register 
+	dataSpeicher[bank][f] = result; // Speichere ergebniss im register 
 
 	takte += 4;
 }

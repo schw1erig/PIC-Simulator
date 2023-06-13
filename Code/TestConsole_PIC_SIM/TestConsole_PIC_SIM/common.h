@@ -22,7 +22,7 @@ extern int matchZeile[1024];
 extern uint8_t wReg;
 
 extern double wdt; //Watchdog 
-extern uint8_t pre; //  prescaler/vorteiler
+extern int pre; //  prescaler/vorteiler
 
 
 
