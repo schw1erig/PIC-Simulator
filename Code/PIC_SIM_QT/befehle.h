@@ -4,6 +4,7 @@
 
 void setIOPorts();
 
+void setProgZeiger(int zeiger);
 
 void decode(int data);
 

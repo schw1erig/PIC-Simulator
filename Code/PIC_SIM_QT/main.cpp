@@ -26,6 +26,7 @@ int matchZeile[1024];
 uint8_t wReg;
 
 double wdt; //Watchdog
+int wdtActive;
 int pre = 0; // Watchdog prescaler
 
 int progZeiger;
@@ -51,10 +52,6 @@ int main(int argc, char *argv[])
 {
 
     bootPIC();
-    //einlesen(filename);
-    //fileAusgeben();
-    //extractBefehle();
-    //testProgAblauf();
     QApplication a(argc, argv);
 
     QTranslator translator;

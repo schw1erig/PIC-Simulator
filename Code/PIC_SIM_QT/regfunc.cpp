@@ -1,4 +1,3 @@
-#pragma once
 #include "common.h"
 #include <iostream>
 
@@ -18,16 +17,20 @@ uint8_t getRegInhalt(uint8_t pfad) {
 
 	// bestimme register, abhängig von direkter/indirekter addressierung
 	if (pfad == 0x00) {
-			// indirekte Adressierung
-			bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
-			f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
-	} 
+        // indirekte Adressierung
+        bank = (getFSR() & 0x80) > 0; // bestimme speicherbank anhand dem 8ten bit
+        f = getFSR() & 0x7f; // bestimme speicheradresse f anhand der 7 bit des fsr reg
+    }
 	else {
-			f = pfad;
+        f = pfad;
 	}
-	cout << "bank: " << bank << "\n";
-	return dataSpeicher[bank][f];
 
+    // gebe inhalt zurueck, außer es wird auf adresse > 63 zugegriffen, dann 0
+    if(f < 64 && f >= 0) {
+        return dataSpeicher[bank][f];
+    } else {
+        return 0;
+    }
 }
 
 void setRegInhalt(uint8_t pfad, uint8_t result) {
@@ -45,11 +48,15 @@ void setRegInhalt(uint8_t pfad, uint8_t result) {
 	else {
 		f = pfad;
 	}
-	// aktuell gespeicherter wert abrufen
-	curInhalt = dataSpeicher[bank][f];
 
-	// Prüfe ob prescaler bits verändert wurden
+
+
+    // Prüfe ob prescaler bits verändert wurden und setze falls ja
 	if (f == 1 && getRP0() == 1) {
+
+        // aktuell gespeicherter wert des option registers abrufen
+        curInhalt = dataSpeicher[1][f];
+
 		if ((curInhalt & 0x03) != (result & 0x03)) {
 			setPreVar((result & 0x03));
 		}
@@ -58,13 +65,16 @@ void setRegInhalt(uint8_t pfad, uint8_t result) {
 	//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
 	if (f == 3) {
 		dataSpeicher[0][f] = result;
-		dataSpeicher[1][f] = result;
-	}
-	else {
+        dataSpeicher[1][f] = result;
+    } else if (f < 64 && f >= 0) {
 
-		// Speichere neuen wert im register
-		dataSpeicher[bank][f] = 0;
-		dataSpeicher[bank][f] = result;
+        // Speichere neuen wert im register
+        dataSpeicher[bank][f] = 0;
+        dataSpeicher[bank][f] = result;
+
+    }
+    else {
+        // kein speichern, wenn auf adresse > 63 zugegriffen wird
 
 	}
 }

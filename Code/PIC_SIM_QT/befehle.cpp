@@ -9,6 +9,20 @@ void setIOPorts() {
 
 }
 
+void setProgZeiger(int zeiger) {
+
+    // ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
+    if (progZeiger < 1024) {
+        progZeiger = zeiger;
+    } else {
+        progZeiger = 0;
+    }
+    // setze pcl entsprechend dem progZeiger
+    setPCL((zeiger & 0x0f));
+    //qDebug() << "PCL: " <<(int) getPCL();
+
+
+}
 
 //Befehl-Decode
 //derzeit auskommentiert wegen fehlender funktionen
@@ -16,9 +30,8 @@ void decode(int data) {
 
 	cout << "Decode aufgerufen:\n";
 
-	// ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
-	progZeiger++;
-	if (progZeiger == 1024) progZeiger = 0;
+    // ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
+    setProgZeiger(progZeiger+1);
 
 	switch (data & 0xffff) {
 	case	0x0008:	picReturn(data); break;
@@ -664,7 +677,7 @@ void btfsc(int data) {
 	}
 	else {
 		// bit b in reg an stelle f = 0, führe nop() aus und überspringe den nächsten befehl
-		progZeiger++;
+        setProgZeiger(progZeiger+1);
 		nop();
 	}
 
@@ -685,7 +698,7 @@ void btfss(int data) {
 	}
 	else {
 		// bit b in f = 1, führe nop() aus und überspringe den nächsten befehl
-		progZeiger++;
+        setProgZeiger(progZeiger+1);
 		nop();
 	}
 
@@ -772,7 +785,7 @@ void call(int data) {
 	cout << "stack[0]: " << stack[0] << "\n";
 
 	// The eleven bit immediate address is loaded into PC bits <10:0>.
-	progZeiger = k;
+    setProgZeiger(k);
 	
 	//The upper bits of the PC are loaded from PCLATH. 
 	
@@ -806,11 +819,9 @@ void call(int data) {
 
 	cout <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
 
-	// ziehe eins ab, da der zeiger hiernach incrementiert wird, dadurch würde ein befehl übersprungen werden
-
 	takte += 8;
 
-	// Timer erhöhen da doppelte befehlslaufzeit
+    // Timer erhöhen falls TOCS 0 da doppelte befehlslaufzeit
 	if (getTOCS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
@@ -856,7 +867,7 @@ void picGoto(int data) {
 
 	int k = data & 0x07ff;
 
-	progZeiger = k;
+    setProgZeiger(k);
 
 	cout << "PCLATH: " << getPCLATH() << "\n";
 
@@ -1138,8 +1149,8 @@ void execBefehl() {
 
 int popStack() {
 	cout << "popStack aufgerufen\n";
-	int top = stack[0];
-	
+    int top = stack[0];
+    /*
 	// i < 7 , da vor dem letzten element aufgehört werden muss, sonst zeigerüberlauf 
 	for (int i = 0; i < 7; i++) {	
 		stack[i + 1] = stack[i];
@@ -1149,18 +1160,38 @@ int popStack() {
 	stack[7] = 0;
 	
 	return top;
+    */
+
+    if(stackZeiger == 0) {
+        stackZeiger = 7;
+    } else {
+       stackZeiger--;
+    }
+
+    top = stack[stackZeiger];
+
+    return top;
+
 
 }
 
 void pushStack(int wert) {
 
 	cout << "pushStack aufgerufen\n";
-
+    /*
 	for (int i = 7; i > 0; i--) {
 		stack[i] = stack[i-1];
 	}
+    */
+    // schreibe auf stack an stelle stackZeiger
+    stack[stackZeiger] = wert;
 
-	stack[0] = wert;
+    //erhöhe StackZeiger, falls = 7, dann setze diesen auf 0
+    if(stackZeiger == 7) {
+       stackZeiger = 0;
+    } else {
+       stackZeiger++;
+    }
 
 }
 
@@ -1170,8 +1201,9 @@ void ckeckInterrupt() {
 
 		if ((getT0IE() && getT0IF()) || (getINTE() && getINTF()) || (getRBIE() && getRBIF())) {
 
-			pushStack(progZeiger);
-			progZeiger = 0x0004;
+            pushStack(progZeiger);
+
+            setProgZeiger(0x0004);
 			setGIE(0);
 
 		}
@@ -1192,6 +1224,7 @@ void setTimer() {
 		}
 	}
 	else {
+        // Flanke an pin prüfen!!!
 		//vorteiler bei timer psa?
 		if (getPSA() == 0) {
 			//erhöhe vorteiler(als 	rückwärtszähler)
