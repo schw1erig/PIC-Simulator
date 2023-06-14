@@ -8,3 +8,4 @@ void bootPIC();
 void einlesen(string filename);
 void fileAusgeben();
 void extractBefehle();
+void addSpaces();

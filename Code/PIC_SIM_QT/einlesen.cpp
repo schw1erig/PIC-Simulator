@@ -9,11 +9,12 @@ using namespace std;
 void resetPIC() {
 
     // init dataSpeicher
+    /*
     for (int i = 0; i < 127; i++) {
         dataSpeicher[0][i] = 0;
         dataSpeicher[1][i] = 0;
     }
-
+    */
     // TO auf 0, bei normalem power up TO = 1
     setTO(0);
 
@@ -21,29 +22,30 @@ void resetPIC() {
     dataSpeicher[1][1] = 0xff;
 
     // init stack
+    /*
     for (int i = 0; i < 8; i++) {
         stack[i] = 0;
     }
-
+    */
     // ProgZeiger reset
-    progZeiger = 0;
+    setProgZeiger(0);
 
     // Stack zeiger reset
-    stackZeiger = 0;
+    //stackZeiger = 0;
 
     // w Reg zurücksetzen
-    wReg = 0;
+    //wReg = 0;
     // Watchdog zurücksetzen
     wdt = 0;
     // Interne Vorteiler variable auf basis der PS bits setzen
     setPreVar(getPS());
 
     // Takte und Timings reset
-    quarzTakt = 4;
-    progTime = 0;
-    takte = 0;
-    deltaTime = 0;
-    progTime_before = 0;
+    //quarzTakt = 4;
+    //progTime = 0;
+    //takte = 0;
+    //deltaTime = 0;
+    //progTime_before = 0;
 
 }
 
@@ -67,7 +69,7 @@ void bootPIC() {
 
     // matchZeile array mit default wert füllen
     for (int i = 0; i < 1024; i++) {
-        matchZeile[i] = NULL;
+        matchZeile[i] = 0;
     }
 
     // init stack
@@ -76,7 +78,7 @@ void bootPIC() {
     }
 
     // ProgZeiger reset
-    progZeiger = 0;
+    setProgZeiger(0);
 
     // Stack zeiger reset
     stackZeiger = 0;
@@ -92,6 +94,7 @@ void bootPIC() {
     wReg = 0x00;
     // Watchdog zurücksetzen
     wdt = 0;
+    wdtActive = 0;
     // Interne Vorteiler variable auf basis der PS bits setzen
     setPreVar(getPS());
 
@@ -130,7 +133,7 @@ void einlesen(string filename) {
 void fileAusgeben() {
     for (int i = 0; i < 1024; i++) {
         if (prog[i] != "no") {
-            qDebug() << prog[i] << "\n";
+            //qDebug() << prog[i] << "\n";
         }
     }
 }
@@ -138,7 +141,6 @@ void fileAusgeben() {
 void extractBefehle() {
 
     // Befehle extrahieren
-// noch fehlend: Array, welches nummer derbefehle auf tatsächliche zeile im programm mappt
     int zeile = 0;
     string sZeiger;
     int iZeiger;
@@ -156,7 +158,7 @@ void extractBefehle() {
 
     // matchZeile array mit default wert füllen
     for (int i = 0; i < 1024; i++) {
-        matchZeile[i] = NULL;
+        matchZeile[i] = 0;
     }
 
     while (prog[zeile] != "no") {
@@ -165,53 +167,76 @@ void extractBefehle() {
         sBefehl = "";
         sGlobZeiger = "";
 
-        qDebug() << "Zu behandelnde Zeile: " << zeile + 1 << "\n";
-        qDebug() << "Erstes Zeichen : " << prog[zeile][0] << ";\n";
+        //qDebug() << "Zu behandelnde Zeile: " << zeile + 1 << "\n";
+        //qDebug() << "Erstes Zeichen : " << prog[zeile][0] << ";\n";
         if (prog[zeile][0] != '0') {
-            qDebug() << "Befehl Not found\n";
+            //qDebug() << "Befehl Not found\n";
         }
         else {
-            qDebug() << "Befehl Found\n";
+            //qDebug() << "Befehl Found\n";
             // Zeilenummer aus ersten 4 Zeichen ermitteln
             for (int i = 0; i < 4; i++) {
                 sZeiger = sZeiger + prog[zeile][i];
-                //qDebug() << "Zeiger schleife: " << sZeiger << "\n";
+                ////qDebug() << "Zeiger schleife: " << sZeiger << "\n";
             }
             // Zeilennummer von hex string in int umwandeln
             iZeiger = stol(sZeiger, nullptr, 16);
-            qDebug() << "int zeiger: " << iZeiger << "\n";
+            //qDebug() << "int zeiger: " << iZeiger << "\n";
 
             // Befehl aus den nöchsten 4 Zeichen auslesen
             for (int i = 5; i < 9; i++) {
                 sBefehl = sBefehl + prog[zeile][i];
-                //qDebug() << "sBefehl schleife: " << sBefehl << "\n";
+                ////qDebug() << "sBefehl schleife: " << sBefehl << "\n";
             }
             // Umwandlung von hex string in int 
             iBefehl = stol(sBefehl, nullptr, 16);
-            qDebug() << "iBefehl in hex: " << hex << iBefehl << "\n";
+            //qDebug() << "iBefehl in hex: " << hex << iBefehl << "\n";
 
             //Speichern im Programspeicher
             progSpeicher[iZeiger] = iBefehl;
-            qDebug() << "im Progspeicher: " << progSpeicher[iZeiger] << "\n";
+            //qDebug() << "im Progspeicher: " << progSpeicher[iZeiger] << "\n";
 
 
             // Globale Zeilennummer ermitteln
             for (int i = 20; i < 26; i++) {
                 sGlobZeiger = sGlobZeiger + prog[zeile][i];
-                //qDebug() << "sGlobZeiger Schleife: " << sGlobZeiger << "\n";
+                ////qDebug() << "sGlobZeiger Schleife: " << sGlobZeiger << "\n";
             }
 
             // Globale Zeilennummer in int umwandeln
             iGlobZeiger = stoi(sGlobZeiger);
-            qDebug() << "int zeiger: " << iGlobZeiger << "\n";
+            //qDebug() << "int zeiger: " << iGlobZeiger << "\n";
 
             // Speichern im matchZeile Array (-1, da array in dem das programm gespeichert ist mit Zeile 1 bei Index 0 beginnt)
             matchZeile[iZeiger] = iGlobZeiger - 1;
-            qDebug() << "Ausgabe Zeile im Array_: "  << dec << matchZeile[iZeiger] << "\n";
+            //qDebug() << "Ausgabe Zeile im Array_: "  << dec << matchZeile[iZeiger] << "\n";
 
         }
         // Nach abarbeitung oder ignorieren Zeilennummer erhöhen
         zeile++;
-        qDebug() << "\n";
+        //qDebug() << "\n";
+    }
+
+    addSpaces();
+
+}
+
+void addSpaces() {
+    // zusätzliche Leerzeichen einfügen, wenn in eienr zeile kein befehl steht
+    //qDebug() << "addSpaces aufgerufen\n";
+    int zeile = 0;
+    char first;
+    string newZeile = "";
+
+    while (prog[zeile] != "no" && zeile < 1024) {
+
+        first = prog[zeile][0];
+
+        if ( first != '0') {
+            newZeile = "         " + prog[zeile];
+            prog[zeile] = newZeile;
+        }
+
+        zeile++;
     }
 }
