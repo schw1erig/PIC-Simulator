@@ -40,11 +40,12 @@ public slots:
     void gui_set_pin_table(int row, int column, std::string PinTableChange);
     void gui_pin_table_checkbox(int row, int column);
 
-    //Box:Quarzfrequenz
-    void gui_set_quarzfrequenz_Label(int quarztakt);
+    //Box:Quarzfrequenz und progTime
+    void gui_set_quarzfrequenz_Label();
+    void gui_set_progTime_Label();
 
     //Box:Laufzeit
-    void gui_set_laufzeit_Label(int laufzeit);
+    void gui_set_laufzeit_Label();
 
     void gui_set_Console_field2(QString file_name);
 
@@ -103,10 +104,19 @@ public slots:
     void on_go_button_clicked();
     void on_reset_Button_clicked();
 
+    void on_next_button_clicked();
+
+    void on_debug_button_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_reset_laufzeit_button_clicked();
 
 
 private slots:
     //void on_pushButton_clicked();
+
+
 
 
 

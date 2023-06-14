@@ -8,6 +8,7 @@
 
 using namespace std;
 
+extern int test;
 
 // Programmpfad
 extern string filename;

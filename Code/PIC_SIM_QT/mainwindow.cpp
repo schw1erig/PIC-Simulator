@@ -106,14 +106,19 @@ void MainWindow::gui_set_pin_table(int row, int column, std::string PinTableChan
     ui->pin_table->setItem(row, column, new QTableWidgetItem(qstr));
 }
 
-void MainWindow::gui_set_quarzfrequenz_Label(int quarztakt)
+void MainWindow::gui_set_quarzfrequenz_Label()
 {
-    ui->quarzfrequenz_Label->setText(to_QString(quarztakt));
+    ui->quarzfrequenz_Label->setText(to_QString(quarzTakt));
 }
 
-void MainWindow::gui_set_laufzeit_Label(int laufzeit)
+void MainWindow::gui_set_progTime_Label()
 {
-    ui->laufzeit_Label->setText(to_QString(laufzeit));
+    //ui->progTime_Label->setText(to_QString(progTime));
+}
+
+void MainWindow::gui_set_laufzeit_Label()
+{
+    ui->laufzeit_Label->setText(to_QString(progTime));
 }
 
 void MainWindow::gui_set_wReg_Label(int wReg)
@@ -168,11 +173,13 @@ void MainWindow::gui_check_wdt_aktiv()
         ui->Console_Field->moveCursor(QTextCursor::End);
         ui->Console_Field->insertPlainText("\n");
         ui->Console_Field->insertPlainText("WDT is checked");
+        wdtActive = 1;
     }
     else{
         ui->Console_Field->moveCursor(QTextCursor::End);
         ui->Console_Field->insertPlainText("\n");
         ui->Console_Field->insertPlainText("WDT is unchecked");
+        wdtActive = 0;
     }
 
 }
@@ -323,7 +330,7 @@ void MainWindow::on_actionLaden_triggered()
 {
     qDebug() << "laden triggered";
     //QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
-    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "G:/Ausbildung/Git/PIC-Simulator/TestProg_PicSim_20210420");
+    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
 
     qDebug() << file_name;
     filename = file_name.toStdString();
@@ -354,8 +361,9 @@ void MainWindow::gui_pin_table_checkbox(int row, int column)
     }
 }
 
-
-void MainWindow::on_go_button_clicked()
+//----------------------------------
+//Buttons und fillGui funktionen:
+void MainWindow::on_next_button_clicked()
 {
     qDebug() << "go clicked" ;
     //testProgAblauf();
@@ -364,10 +372,61 @@ void MainWindow::on_go_button_clicked()
     //gui_pin_table_checkbox(2,1);
     execBefehl();
     fillBox();
+    gui_set_laufzeit_Label();
 
 
 }
 
+void MainWindow::on_go_button_clicked()
+{
+    if (test == 1) {
+        test = 0;
+    } else {
+        test = 1;
+    }
+
+
+
+    while (test) {
+        //i++;
+        //qDebug() << i;
+
+        execBefehl();
+        fillBox();
+        gui_set_laufzeit_Label();
+
+        _sleep(0);
+        qApp->processEvents();
+
+    }
+}
+
+void MainWindow::on_reset_Button_clicked()
+{
+    qDebug() << "Reset Button";
+    test = 0;
+    qDebug() << test;
+    resetPIC();
+    fillBox();
+}
+
+
+void MainWindow::on_debug_button_clicked()
+{
+    qDebug() << "Debug";
+}
+
+
+
+
+void MainWindow::on_reset_laufzeit_button_clicked()
+{
+    progTime = 0;
+    gui_set_laufzeit_Label();
+}
+
+//-----------
+//FillGUi funktionen
 void MainWindow::fillBox() {
     //int gesamtzeile =106;
     ui->Console_Field->clear();
@@ -375,9 +434,9 @@ void MainWindow::fillBox() {
     for (int i = 0; i < 1024; i++) {
         if (prog[i] != "no") {
             if(i == matchZeile[progZeiger]) {
-                gui_set_Console_field("X" + prog[i]);
+                gui_set_Console_field("->" + prog[i]);
             } else {
-                gui_set_Console_field("  " + prog[i]);
+                gui_set_Console_field("   " + prog[i]);
             }
         }
     }
@@ -389,10 +448,4 @@ void MainWindow::fillBox() {
 
 
 
-
-void MainWindow::on_reset_Button_clicked()
-{
-    resetPIC();
-    fillBox();
-}
 

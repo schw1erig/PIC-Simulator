@@ -8,6 +8,8 @@
 #include <QTranslator>
 #include <string>
 
+int test;
+
 // Globale Variablen
 // Programmpfad
 //string filename = "G:/Ausbildung/Git/PIC-Simulator/TestProg_PicSim_20210420/TPicSim1.LST";
