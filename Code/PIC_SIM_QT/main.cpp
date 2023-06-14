@@ -29,6 +29,8 @@ double wdt; //Watchdog
 int wdtActive;
 int pre = 0; // Watchdog prescaler
 
+int maxZeilen;
+
 int progZeiger;
 int stackZeiger;
 

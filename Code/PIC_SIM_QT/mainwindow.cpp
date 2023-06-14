@@ -369,7 +369,7 @@ void MainWindow::on_go_button_clicked()
 }
 
 void MainWindow::fillBox() {
-    int gesamtzeile =106;
+    //int gesamtzeile =106;
     ui->Console_Field->clear();
 
     for (int i = 0; i < 1024; i++) {
@@ -381,7 +381,7 @@ void MainWindow::fillBox() {
             }
         }
     }
-    for (int i = 0; i<=gesamtzeile-matchZeile[progZeiger]+10; i++){
+    for (int i = 0; i<=maxZeilen-matchZeile[progZeiger]+10; i++){
         ui->Console_Field->moveCursor(QTextCursor::Up);
     }
 }

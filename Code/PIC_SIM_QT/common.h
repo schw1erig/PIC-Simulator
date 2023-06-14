@@ -28,7 +28,7 @@ extern double wdt; //Watchdog
 extern int wdtActive;
 extern int pre; //  prescaler/vorteiler
 
-
+extern int maxZeilen;
 
 
 extern uint8_t maskeC;

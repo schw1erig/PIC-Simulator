@@ -126,6 +126,8 @@ void einlesen(string filename) {
             prog[counter] = line;
             counter++;
         }
+        maxZeilen = counter;
+        qDebug() << maxZeilen;
         file.close();
     }
 }
