@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QPainter>
 
 
 
@@ -18,7 +19,7 @@ public:
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    virtual void paintEvent(QPaintEvent *event);
 
 public slots:
 

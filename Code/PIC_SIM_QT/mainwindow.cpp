@@ -54,11 +54,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->Console_Field->setReadOnly(true);
-
     fillBox();
 }
 
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    QImage image;
+    image.load("../ressources/circle.png");
 
+    QPainter imagePainter(this);
+    imagePainter.drawImage(QPoint(1045, 60), image);
+}
 
 MainWindow::~MainWindow()
 {
@@ -356,8 +362,6 @@ void MainWindow::on_go_button_clicked()
     //gui_set_Console_field(to_string(wReg));
     //gui_check_wdt_aktiv();
     //gui_pin_table_checkbox(2,1);
-
-
     execBefehl();
     fillBox();
 
@@ -365,7 +369,7 @@ void MainWindow::on_go_button_clicked()
 }
 
 void MainWindow::fillBox() {
-
+    int gesamtzeile =106;
     ui->Console_Field->clear();
 
     for (int i = 0; i < 1024; i++) {
@@ -375,8 +379,10 @@ void MainWindow::fillBox() {
             } else {
                 gui_set_Console_field("  " + prog[i]);
             }
-
         }
+    }
+    for (int i = 0; i<=gesamtzeile-matchZeile[progZeiger]+10; i++){
+        ui->Console_Field->moveCursor(QTextCursor::Up);
     }
 }
 
