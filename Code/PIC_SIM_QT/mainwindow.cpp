@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     QImage image;
-    image.load("../ressources/circle.png");
+    image.load(":ressources/circle.png");
 
     QPainter imagePainter(this);
     imagePainter.drawImage(QPoint(1045, 60), image);

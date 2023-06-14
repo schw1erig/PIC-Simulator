@@ -1329,7 +1329,7 @@
         </rect>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
+        <enum>Qt::WheelFocus</enum>
        </property>
        <property name="plainText">
         <string/>
