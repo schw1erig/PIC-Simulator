@@ -20,7 +20,7 @@ public:
     ~MainWindow();
 
 
-private slots:
+public slots:
 
 
 
@@ -100,14 +100,14 @@ private slots:
     void on_actionLaden_triggered();
 
     void on_go_button_clicked();
-
+    void on_reset_Button_clicked();
 
 
 
 private slots:
-    void on_pushButton_clicked();
+    //void on_pushButton_clicked();
 
-    void on_reset_Button_clicked();
+
 
 private:
     Ui::MainWindow *ui;
