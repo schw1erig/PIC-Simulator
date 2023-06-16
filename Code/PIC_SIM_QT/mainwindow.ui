@@ -208,7 +208,7 @@
          <rect>
           <x>130</x>
           <y>40</y>
-          <width>101</width>
+          <width>111</width>
           <height>121</height>
          </rect>
         </property>
@@ -346,14 +346,30 @@
         <widget class="QLabel" name="wdt_Label">
          <property name="geometry">
           <rect>
-           <x>70</x>
+           <x>30</x>
            <y>100</y>
-           <width>31</width>
+           <width>71</width>
            <height>16</height>
           </rect>
          </property>
          <property name="text">
-          <string>0.0 </string>
+          <string>0.0</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_39">
+         <property name="geometry">
+          <rect>
+           <x>80</x>
+           <y>100</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border: 0px solid red</string>
+         </property>
+         <property name="text">
+          <string>µs</string>
          </property>
         </widget>
        </widget>
@@ -2433,7 +2449,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FF&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
@@ -2471,7 +2487,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2510,7 +2526,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2549,7 +2565,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2578,7 +2594,7 @@
       <string>Adr. 2</string>
      </property>
     </widget>
-    <widget class="QLabel" name="gui_stack2_2">
+    <widget class="QLabel" name="gui_stack2">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -2588,7 +2604,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2617,7 +2633,7 @@
       <string>Adr. 1</string>
      </property>
     </widget>
-    <widget class="QLabel" name="gui_stack1_3">
+    <widget class="QLabel" name="gui_stack1">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -2627,7 +2643,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2666,7 +2682,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2705,7 +2721,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
    </widget>
@@ -2744,9 +2760,25 @@
       </rect>
      </property>
      <property name="text">
-      <string>FF</string>
+      <string>0</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="wdt_reset_label">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>320</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

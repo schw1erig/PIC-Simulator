@@ -1,8 +1,35 @@
 #include "common.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
+
+std::string doubleToString(double wert) {
+
+    string sWert;
+    stringstream stream;
+
+    stream << wert;
+    sWert = stream.str();
+
+    qDebug() << "double wert als string: " << sWert;
+
+    return sWert;
+
+
+}
+
+std::string toHexString(uint8_t wert) {
+
+    string sWert;
+    stringstream stream;
+
+    stream << hex << (int) wert;
+    sWert = stream.str();
+
+    return sWert;
+}
 
 uint8_t getRegPfad(uint8_t pfad) {
 	// wahrscheinlich ünerflüssig
@@ -60,10 +87,15 @@ void setRegInhalt(uint8_t pfad, uint8_t result) {
 		if ((curInhalt & 0x03) != (result & 0x03)) {
 			setPreVar((result & 0x03));
 		}
-	}
+    }
 
-	//falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
-	if (f == 3) {
+    if (f == 1 && getRP0() == 0) {
+
+        setPreVar(getPS());
+    }
+
+    if (f == 3) {
+        //falls f == status reg, kopiere status auf beide Bänke um fehler zu vermeiden
 		dataSpeicher[0][f] = result;
         dataSpeicher[1][f] = result;
     } else if (f < 64 && f >= 0) {
@@ -301,9 +333,18 @@ void setPreVar(int wert) {
 	}
 }
 
-int getTOCS() {
+int getINTEDG() {
+    return getOption(0x40);
+}
+
+int getT0CS() {
 	return getOption(0x20);
 }
+
+int getT0SE() {
+    return getOption(0x10);
+}
+
 int getPSA() {
 	return getOption(0x08);
 }
@@ -314,8 +355,14 @@ int getOption(uint8_t maske) {
 
 	// lese option aus dem Datenspeicher (da status in beiden Bänken gleich eigentlich unnötig)
 	uint8_t reg = dataSpeicher[1][1];
-	//cout << "getoption called: Maske: " << (int) maske << "ergebnis: " << ((reg & maske) > 0) << "\n";
-	return ((reg & maske) > 0);
+
+    if(maske == 0xff) {
+        return reg;
+    } else {
+        return ((reg & maske) > 0);
+    }
+
+
 }
 void setOption(uint8_t maske, int wert) {
 
@@ -341,7 +388,11 @@ int getStatus(uint8_t maske) {
 	// lese status aus dem aktuellen Datenspeicher (da status in beiden Bänken gleich eigentlich unnötig)
 	uint8_t status = dataSpeicher[0][3];
 
-	return ((status & maske) > 0);
+    if(maske == 0xff) {
+        return status;
+    } else {
+        return ((status & maske) > 0);
+    }
 }
 
 int getC() {
@@ -376,7 +427,7 @@ void setStatus(uint8_t maske, int wert) {
 
 	status = dataSpeicher[0][3];
 
-	int bit = (status & maske) > 0;
+    //int bit = (status & maske) > 0;
 
 	if (wert == 0) {
 		status &= ~(maske);

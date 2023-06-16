@@ -1,4 +1,9 @@
 #include <iostream>
+#include <string>
+
+std::string toHexString(uint8_t wert);
+
+std::string doubleToString(double wert);
 
 uint8_t getRegPfad(uint8_t pfad);
 uint8_t getRegInhalt(uint8_t pfad);
@@ -40,7 +45,9 @@ void setINTCON(uint8_t maske, int wert);
 
 //----------
 void setPreVar(int wert);
-int getTOCS();
+int getINTEDG();
+int getT0CS();
+int getT0SE();
 int getPSA();
 int getPS();
 int getOption(uint8_t maske);

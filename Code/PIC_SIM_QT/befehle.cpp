@@ -1,6 +1,6 @@
 #include "common.h"
 #include <iostream>
-
+#include <QDebug>
 
 using namespace std;
 
@@ -28,7 +28,7 @@ void setProgZeiger(int zeiger) {
 //derzeit auskommentiert wegen fehlender funktionen
 void decode(int data) {
 
-	cout << "Decode aufgerufen:\n";
+    //cout << "Decode aufgerufen:\n";
 
     // ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
     setProgZeiger(progZeiger+1);
@@ -257,7 +257,7 @@ void decf (int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = getRegInhalt(f); // Register f Inhalt
 
-	uint8_t result = reg--;
+    uint8_t result = reg-1;
 
 	int z = (result == 0);
 
@@ -283,10 +283,7 @@ void decfsz(int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = getRegInhalt(f); // Register f Inhalt
 
-	uint8_t result = reg--;
-
-	int z = (result == 0);
-
+    uint8_t result = reg-1;
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -298,9 +295,12 @@ void decfsz(int data) {
 		wReg = result;   // Führt die logische AND-Operation zwischen WREG und dem Register aus
 	}
 
-	if (result == 0) nop();
+    if (result == 0) {
+        progZeiger++;
+        nop();
+    }
 
-	setZ(z);
+
 }
 
 void incf(int data) {
@@ -312,7 +312,7 @@ void incf(int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = getRegInhalt(f); // Register f Inhalt
 
-	uint8_t result = reg++;
+    uint8_t result = reg+1;
 
 	int z = (result == 0);
 
@@ -338,9 +338,11 @@ void incfsz(int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = getRegInhalt(f); // Register f Inhalt
 
-	uint8_t result = reg++;
+    //qDebug() << "reg: " << Qt::hex << reg << "f:" << Qt::hex << f;
 
-	int z = (result == 0);
+    uint8_t result = reg + 1;
+
+    //qDebug() << "result: " << Qt::hex << result;
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -351,9 +353,12 @@ void incfsz(int data) {
 		wReg = result;   
 	}
 
-	if (result == 0) nop();
+    if (result == 0) {
+        progZeiger++;
+        nop();
+    }
 
-	setZ(z);
+    //qDebug() << "Inhalt " << Qt::hex << getRegInhalt(f);
 }
 
 void iorwf(int data) {
@@ -433,17 +438,21 @@ void movwf(int data) {
 
 }
 
-void nop() { 
-	cout << "nop aufgerufen\n";
-	takte += 4; 
+void nop() {
+    cout << "nop aufgerufen\n";
+
 	//timer erhöhen
-	if (getTOCS() == 0) {
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
 			setT0IF(1);
 		}
 	}
+
+    checkWatchdog();
+
+    takte += 4;
 }
 
 void rlf(int data) {
@@ -629,7 +638,7 @@ void bcf(int data) {
 	// Löscht Bit b in Adresse f
 
 	uint8_t f = 0x007f & data; // Register Pfad
-	uint8_t b = 0x0380 & data;
+    int b = 0x0380 & data;
 	uint8_t reg = getRegInhalt(f);
 	uint8_t result;
 
@@ -648,11 +657,13 @@ void bsf(int data) {
 	// Setzt Bit b in Adresse f
 
 	uint8_t f = 0x007f & data; // Register Pfad
-	uint8_t b = 0x0380 & data;
+    int b = 0x0380 & data;
 	uint8_t reg = getRegInhalt(f);
 	uint8_t result;
 
-	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
+    b = (b >> 7); // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
+
+    //qDebug() << "b: " << (int) b;
 
 	// Führe Operation aus
 	result = reg | (1u << b); //setzen des bten bits: mit oder
@@ -819,10 +830,10 @@ void call(int data) {
 
 	cout <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
 
-	takte += 8;
+    takte += 4;
 
-    // Timer erhöhen falls TOCS 0 da doppelte befehlslaufzeit
-	if (getTOCS() == 0) {
+    // Timer erhöhen falls T0CS 0 da doppelte befehlslaufzeit
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
@@ -830,6 +841,9 @@ void call(int data) {
 		}
 	}
 
+    checkWatchdog();
+
+    takte += 4;
 
 }
 
@@ -899,16 +913,20 @@ void picGoto(int data) {
 
 	}
 
-	takte += 8;
+    takte += 4;
 
 	// Timer erhöhen da doppelte befehlslaufzeit
-	if (getTOCS() == 0) {
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
 			setT0IF(1);
 		}
 	}
+
+    checkWatchdog();
+
+    takte += 4;
 
 }
 
@@ -957,16 +975,22 @@ void retfie(int data) {
 
 	setGIE(1);
 
-	takte += 8;
+    takte += 4;
 
 	// Timer erhöhen da doppelte befehlslaufzeit
-	if (getTOCS() == 0) {
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
 			setT0IF(1);
 		}
 	}
+
+    checkWatchdog();
+
+    takte += 4;
+
+
 
 }
 
@@ -983,22 +1007,28 @@ void retlw(int data) {
 		instruction.
 	*/
 
-	uint8_t k = data % 0xff;
+    uint8_t k = data & 0xff;
+
+    qDebug() << "k: " << Qt::hex << k << "data: " << Qt::hex << data;
 
 	wReg = k;
 
 	progZeiger = popStack();
 
-	takte += 8;
+    takte += 4;
 
 	// Timer erhöhen da doppelte befehlslaufzeit
-	if (getTOCS() == 0) {
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
 			setT0IF(1);
 		}
 	}
+
+    checkWatchdog();
+
+    takte += 4;
 }
 
 void picReturn(int data) {
@@ -1015,16 +1045,20 @@ void picReturn(int data) {
 
 	progZeiger = popStack();
 
-	takte += 8;
+    takte += 4;
 
 	// Timer erhöhen da doppelte befehlslaufzeit
-	if (getTOCS() == 0) {
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
 			setT0IF(1);
 		}
 	}
+
+    checkWatchdog();
+
+    takte += 4;
 
 }
 
@@ -1053,17 +1087,17 @@ void sublw(int data) {
 
 	uint8_t k = 0x00ff & data; // Literal k Pfad
 
-	int c = 0;
+    int c = 1;
 	int z = 0;
-	int dc = 0;
+    int dc = 1;
 	int result;
 	
 
 	//DC berechnung
 	// DC: bei add: > 15 -> dc = 1, <= 15 -> dc = 0 ; sub: < 0 -> dc = 1, >= 0 -> dc  0
 
-	if (((k & 0x0f) - (wReg & 0x0f)) < 0) {
-		dc = 1; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
+    if (((k & 0x0f) - (wReg & 0x0f)) < 0) {
+        dc = 0; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
 	}
 
 	// Berechnung
@@ -1074,9 +1108,6 @@ void sublw(int data) {
 		// Setzt das Carry-Flag basierend auf dem Ergebnis
 		c = 0; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
 		result += 255;
-	}
-	else {
-		c = 1;
 	}
 
 	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
@@ -1118,8 +1149,8 @@ void xorlw(int data) {
 
 
 void execBefehl() {
-	cout << "\nZeile: (beginnend bei 1)" << dec << matchZeile[progZeiger] + 1 << "\n";
-	cout << "execBefehl aufgerufen\n";
+    //cout << "\nZeile: (beginnend bei 1)" << dec << matchZeile[progZeiger] + 1 << "\n";
+    //cout << "execBefehl aufgerufen\n";
 	
 
 	//befehl an stelle des programmzählers erhalten
@@ -1133,13 +1164,10 @@ void execBefehl() {
 	// vorherige Laufzeit speichern,
 	progTime_before = progTime;
 	//aktuelle Laufzeit bestimmen
-	progTime = (takte / quarzTakt); // progTime in mikrosekunden
-	//delta für den abgearbeiteten befehl berechnen
-	deltaTime = progTime - progTime_before;
-	// delta zu watchdog addieren
-	wdt += (deltaTime/1000); // convert time to milli seconds and add time to wdt
+    progTime = (takte / quarzTakt); // progTime in mikrosekunden
 
-	checkWatchdog();
+    checkWatchdog();
+
 	setTimer();
 	ckeckInterrupt();
 	// GUI aktualisieren
@@ -1216,7 +1244,7 @@ void ckeckInterrupt() {
 void setTimer() {
 
 	//quelle für timer(option->clock source)
-	if (getTOCS() == 0) {
+    if (getT0CS() == 0) {
 		// erhöhe Timer
 		dataSpeicher[0][1]++;
 		if (dataSpeicher[0][1] == 0) {
@@ -1256,7 +1284,33 @@ void setTimer() {
 
 void checkWatchdog() {
 
-	if (wdt > 18) {
+    if (wdtActive) {
+        if (getPSA() == 1) {
+            //vorteiler bei watchdog
+            if (pre != 0) {
+                // Preskaler nicht abgelaufen
+                //erhöhe vorteiler(als 	rückwärtszähler)
+                pre--;
+                // setze watchdog zurück
+                wdt = 0;
+            }
+            else {
+                // Preskaler abgelaufen, resette preskaler und erhöhe wdt
+                setPreVar(getPS());
+                wdt += 4/quarzTakt;
+            }
+        } else {
+            // vorteiler nicht an watchdog, erhoehe watchdog
+            wdt += 4/quarzTakt;
+        }
+
+        // Watchdog bei 18ms, dann reset
+        if (!(wdt < 18000)) {
+            wdtResetPIC();
+        }
+    }
+    /*
+    if (!(wdt < 18)) {
 		// watchdog  abgelaufen?
 		if (getPSA() == 1) {
 			//vorteiler bei watchdog?
@@ -1270,21 +1324,19 @@ void checkWatchdog() {
 			else {
 				// watchdog mit pre, beide abgelaufen
 				// watchdog reset
-				resetPIC();
-				//Popup Watchdog reset
+                wdtResetPIC();
 			}
 		}
 		else {
 			// watchdog ohne pre abgelaufen
 			// watchdog reset
-			resetPIC();
-			//Popup Watchdog reset
+            wdtResetPIC();
 		}
 	}
 	else {
 		// No Reset!!
 	}
-
+    */
 
 	//vorteiler bei watchdog?
 	/*if (getPSA() == 1) {

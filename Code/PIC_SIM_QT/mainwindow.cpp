@@ -7,42 +7,6 @@
 
 using namespace std;
 
-int quarztakt;
-int laufzeit;
-int fsr;
-int pcl;
-int pcLath;
-int status;
-int pc;
-int stackpointer;
-int vt;
-//int wdt;
-int irp;
-int rp1;
-int rp0;
-int t0;
-int pd;
-int z;
-int dc;
-int c;
-int option;
-int rbp;
-int intedg;
-int t0cs;
-int t0se;
-int psa;
-int ps2;
-int ps1;
-int ps0;
-int intcon;
-int gie;
-int pie;
-int t0ie;
-int inte;
-int rbie;
-int t0if;
-int intf;
-int rbif;
 
 std::string ConsoleOutput;
 
@@ -54,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->Console_Field->setReadOnly(true);
-    fillBox();
+    //fillBox();
+    refresh_GUI();
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -76,6 +41,12 @@ std:string s_input = std::to_string(input);
     QString q_input = QString::fromStdString(s_input);
     return q_input;
 }
+
+QString MainWindow::string_to_QString(string input){
+    QString q_input = QString::fromStdString(input);
+    return q_input;
+}
+
 
 void MainWindow::gui_set_Console_field(std::string ConsoleOutput)
 {
@@ -121,201 +92,231 @@ void MainWindow::gui_set_laufzeit_Label()
     ui->laufzeit_Label->setText(to_QString(progTime));
 }
 
-void MainWindow::gui_set_wReg_Label(int wReg)
+void MainWindow::gui_set_wReg_Label()
 {
-    ui->wReg_Label->setText(to_QString(wReg));
+    ui->wReg_Label->setText(string_to_QString(toHexString(wReg)));
 }
 
-void MainWindow::gui_set_fsr_Label(int fsr)
+void MainWindow::gui_set_fsr_Label()
 {
-    ui->fsr_Label->setText(to_QString(fsr));
+    ui->fsr_Label->setText(to_QString(getFSR()));
 }
 
-void MainWindow::gui_set_pcl_Label(int pcl)
+void MainWindow::gui_set_pcl_Label()
 {
-    ui->pcl_Label->setText(to_QString(pcl));
+    ui->pcl_Label->setText(to_QString(getPCL()));
 }
 
-void MainWindow::gui_set_pcLath_Label(int pcl)
+void MainWindow::gui_set_pcLath_Label()
 {
-    ui->pcLath_Label->setText(to_QString(pcLath));
+    ui->pcLath_Label->setText(to_QString(getPCLATH()));
 }
 
-void MainWindow::gui_set_status_Label(int status)
+void MainWindow::gui_set_status_Label()
 {
-    ui->status_Label->setText(to_QString(status));
+    uint8_t status = getStatus(0xff);
+    ui->status_Label->setText(string_to_QString(toHexString(status)));
 }
 
-void MainWindow::gui_set_pc_Label(int pc)
+void MainWindow::gui_set_pc_Label()
 {
-    ui->pc_Label->setText(to_QString(pc));
+    ui->pc_Label->setText(to_QString(progZeiger));
 }
 
-void MainWindow::gui_set_stackpointer_Label(int stackpointer)
+void MainWindow::gui_set_stackpointer_Label()
 {
-    ui->stackpointer_Label->setText(to_QString(stackpointer));
+    ui->stackpointer_Label->setText(to_QString(stackZeiger));
+    ui->gui_stackZeiger->setText(to_QString(stackZeiger));
 }
 
-void MainWindow::gui_set_vt_Label(int vt)
+void MainWindow::gui_set_stack_elements()
 {
-    ui->vt_Label->setText(to_QString(vt));
+
+    ui->gui_stack0->setText(to_QString(stack[0]));
+    ui->gui_stack1->setText(to_QString(stack[1]));
+    ui->gui_stack2->setText(to_QString(stack[2]));
+    ui->gui_stack3->setText(to_QString(stack[3]));
+    ui->gui_stack4->setText(to_QString(stack[4]));
+    ui->gui_stack5->setText(to_QString(stack[5]));
+    ui->gui_stack6->setText(to_QString(stack[6]));
+    ui->gui_stack7->setText(to_QString(stack[7]));
+
+
 }
 
-void MainWindow::gui_set_wdt_Label(int wdt)
+
+void MainWindow::gui_set_vt_Label()
 {
-    ui->wdt_Label->setText(to_QString(wdt));
+    ui->vt_Label->setText(string_to_QString(toHexString(pre)));
+}
+
+void MainWindow::gui_set_wdt_Label()
+{
+    string sWdt = doubleToString(wdt);
+    ui->wdt_Label->setText(string_to_QString(sWdt));
 }
 
 void MainWindow::gui_check_wdt_aktiv()
 {
     if(ui->checkBox->isChecked())
     {
-        ui->Console_Field->moveCursor(QTextCursor::End);
-        ui->Console_Field->insertPlainText("\n");
-        ui->Console_Field->insertPlainText("WDT is checked");
         wdtActive = 1;
     }
     else{
-        ui->Console_Field->moveCursor(QTextCursor::End);
-        ui->Console_Field->insertPlainText("\n");
-        ui->Console_Field->insertPlainText("WDT is unchecked");
         wdtActive = 0;
+    }
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    if(ui->checkBox->isChecked())
+    {
+        wdtActive = 1;
+    }
+    else{
+        wdtActive = 0;
+    }
+}
+
+void MainWindow::gui_set_irp_Label()
+{
+    ui->irp_Label->setText(to_QString(getStatus(0x80)));
+}
+
+void MainWindow::gui_set_rp1_Label()
+{
+    ui->rp1_Label->setText(to_QString(getStatus(0x40)));
+}
+
+void MainWindow::gui_set_rp0_Label()
+{
+    ui->rp0_Label->setText(to_QString(getRP0()));
+}
+
+void MainWindow::gui_set_t0_Label()
+{
+    ui->t0_Label->setText(to_QString(getTO()));
+}
+
+void MainWindow::gui_set_pd_Label()
+{
+    ui->pd_Label->setText(to_QString(getPD()));
+}
+
+void MainWindow::gui_set_z_Label()
+{
+    ui->z_Label->setText(to_QString(getZ()));
+}
+
+void MainWindow::gui_set_dc_Label()
+{
+    ui->dc_Label->setText(to_QString(getDC()));
+}
+
+void MainWindow::gui_set_c_Label()
+{
+    ui->c_Label->setText(to_QString(getC()));
+}
+
+void MainWindow::gui_set_option_Label()
+{
+    uint8_t option = getOption(0xff);
+    ui->option_Label->setText(string_to_QString(toHexString(option)));
+}
+
+void MainWindow::gui_set_rbp_Label()
+{
+    ui->rbp_Label->setText(to_QString(getOption(0x80)));
+}
+
+void MainWindow::gui_set_intedg_Label()
+{
+    ui->intedg_Label->setText(to_QString(getINTEDG()));
+}
+
+void MainWindow::gui_set_t0cs_Label()
+{
+    ui->t0cs_Label->setText(to_QString(getT0CS()));
+}
+void MainWindow::gui_set_t0se_Label()
+{
+    ui->t0se_Label->setText(to_QString(getT0SE()));
+}
+
+void MainWindow::gui_set_psa_Label()
+{
+    ui->psa_Label->setText(to_QString(getPSA()));
+}
+
+void MainWindow::gui_set_ps2_Label()
+{
+    ui->ps2_Label->setText(to_QString(getOption(0x04)));
+}
+
+void MainWindow::gui_set_ps1_Label()
+{
+    ui->ps1_Label->setText(to_QString(getOption(0x02)));
+}
+
+void MainWindow::gui_set_ps0_Label()
+{
+    ui->ps0_Label->setText(to_QString(getOption(0x01)));
+}
+
+void MainWindow::gui_set_intcon_Label()
+{
+    ui->intcon_Label->setText(to_QString(getINTCON(0xff)));
+}
+
+void MainWindow::gui_set_gie_Label()
+{
+    ui->gie_Label->setText(to_QString(getGIE()));
+}
+
+void MainWindow::gui_set_pie_Label()
+{
+    ui->pie_Label->setText(to_QString(getEEIE()));
+}
+
+void MainWindow::gui_set_t0ie_Label()
+{
+    ui->t0ie_Label->setText(to_QString(getT0IE()));
+}
+
+void MainWindow::gui_set_inte_Label()
+{
+    ui->inte_Label->setText(to_QString(getT0IE()));
+}
+
+void MainWindow::gui_set_rbie_Label()
+{
+    ui->rbie_Label->setText(to_QString(getRBIE()));
+}
+
+void MainWindow::gui_set_t0if_Label()
+{
+    ui->t0if_Label->setText(to_QString(getT0IF()));
+}
+
+void MainWindow::gui_set_intf_Label()
+{
+    ui->intf_Label->setText(to_QString(getINTF()));
+}
+
+void MainWindow::gui_set_rbif_Label()
+{
+    ui->rbif_Label->setText(to_QString(getRBIF()));
+}
+
+void MainWindow::gui_set_wdt_reset_label()
+{
+    if (wdtReset) {
+       ui->wdt_reset_label->setText(string_to_QString("Watchdog reset"));
+    } else {
+       ui->wdt_reset_label->setText(string_to_QString(""));
     }
 
 }
-
-void MainWindow::gui_set_irp_Label(int irp)
-{
-    ui->irp_Label->setText(to_QString(irp));
-}
-
-void MainWindow::gui_set_rp1_Label(int rp1)
-{
-    ui->rp1_Label->setText(to_QString(rp1));
-}
-
-void MainWindow::gui_set_rp0_Label(int rp0)
-{
-    ui->rp0_Label->setText(to_QString(rp0));
-}
-
-void MainWindow::gui_set_t0_Label(int t0)
-{
-    ui->t0_Label->setText(to_QString(t0));
-}
-
-void MainWindow::gui_set_pd_Label(int pd)
-{
-    ui->pd_Label->setText(to_QString(pd));
-}
-
-void MainWindow::gui_set_z_Label(int z)
-{
-    ui->z_Label->setText(to_QString(z));
-}
-
-void MainWindow::gui_set_dc_Label(int dc)
-{
-    ui->dc_Label->setText(to_QString(dc));
-}
-
-void MainWindow::gui_set_c_Label(int c)
-{
-    ui->c_Label->setText(to_QString(c));
-}
-
-void MainWindow::gui_set_option_Label(int option)
-{
-ui->option_Label->setText(to_QString(option));
-}
-
-void MainWindow::gui_set_rbp_Label(int rbp)
-{
-    ui->rbp_Label->setText(to_QString(rbp));
-}
-
-void MainWindow::gui_set_intedg_Label(int intedg)
-{
-    ui->intedg_Label->setText(to_QString(intedg));
-}
-
-void MainWindow::gui_set_t0cs_Label(int t0cs)
-{
-    ui->t0cs_Label->setText(to_QString(t0cs));
-}
-
-void MainWindow::gui_set_t0se_Label(int t0se)
-{
-    ui->t0se_Label->setText(to_QString(t0se));
-}
-
-void MainWindow::gui_set_psa_Label(int psa)
-{
-    ui->psa_Label->setText(to_QString(psa));
-}
-
-void MainWindow::gui_set_ps2_Label(int ps2)
-{
-    ui->ps2_Label->setText(to_QString(ps2));
-}
-
-void MainWindow::gui_set_ps1_Label(int ps1)
-{
-    ui->ps1_Label->setText(to_QString(ps1));
-}
-
-void MainWindow::gui_set_ps0_Label(int ps0)
-{
-    ui->ps0_Label->setText(to_QString(ps0));
-}
-
-void MainWindow::gui_set_intcon_Label(int intcon)
-{
-    ui->intcon_Label->setText(to_QString(intcon));
-}
-
-void MainWindow::gui_set_gie_Label(int gie)
-{
-    ui->gie_Label->setText(to_QString(gie));
-}
-
-void MainWindow::gui_set_pie_Label(int pie)
-{
-    ui->pie_Label->setText(to_QString(pie));
-}
-
-void MainWindow::gui_set_t0ie_Label(int t0ie)
-{
-    ui->t0ie_Label->setText(to_QString(t0ie));
-}
-
-void MainWindow::gui_set_inte_Label(int inte)
-{
-    ui->inte_Label->setText(to_QString(inte));
-}
-
-void MainWindow::gui_set_rbie_Label(int rbie)
-{
-    ui->rbie_Label->setText(to_QString(rbie));
-}
-
-void MainWindow::gui_set_t0if_Label(int t0if)
-{
-    ui->t0if_Label->setText(to_QString(t0if));
-}
-
-void MainWindow::gui_set_intf_Label(int intf)
-{
-    ui->intf_Label->setText(to_QString(intf));
-}
-
-void MainWindow::gui_set_rbif_Label(int rbif)
-{
-    ui->rbif_Label->setText(to_QString(rbif));
-}
-
-
-
 
 
 void MainWindow::gui_set_Console_field2(QString file_name)
@@ -330,7 +331,7 @@ void MainWindow::on_actionLaden_triggered()
 {
     qDebug() << "laden triggered";
     //QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
-    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "C://");
+    QString file_name = QFileDialog::getOpenFileName(this, "Open a file", "G:/Ausbildung/Git/PIC-Simulator/TestProg_PicSim_20210420");
 
     qDebug() << file_name;
     filename = file_name.toStdString();
@@ -365,37 +366,32 @@ void MainWindow::gui_pin_table_checkbox(int row, int column)
 //Buttons und fillGui funktionen:
 void MainWindow::on_next_button_clicked()
 {
-    qDebug() << "go clicked" ;
+    qDebug() << "next clicked" ;
     //testProgAblauf();
-    //gui_set_Console_field(to_string(wReg));
     //gui_check_wdt_aktiv();
     //gui_pin_table_checkbox(2,1);
+    //wdt = 0;
+    wdtReset = 0;
     execBefehl();
-    fillBox();
-    gui_set_laufzeit_Label();
-
-
+    refresh_GUI();
 }
 
 void MainWindow::on_go_button_clicked()
 {
-    if (test == 1) {
-        test = 0;
+    if (goLoop == 1) {
+        goLoop = 0;
     } else {
-        test = 1;
+        goLoop = 1;
+        // Watchdog zur�cksetzen
+        wdt = 0;
+        wdtReset = 0;
     }
 
-
-
-    while (test) {
-        //i++;
-        //qDebug() << i;
-
+    while (goLoop) {
         execBefehl();
-        fillBox();
-        gui_set_laufzeit_Label();
+        refresh_GUI();
 
-        _sleep(0);
+        //_sleep(0);
         qApp->processEvents();
 
     }
@@ -404,16 +400,23 @@ void MainWindow::on_go_button_clicked()
 void MainWindow::on_reset_Button_clicked()
 {
     qDebug() << "Reset Button";
-    test = 0;
-    qDebug() << test;
+    goLoop = 0;
     resetPIC();
-    fillBox();
+    refresh_GUI();
 }
 
 
 void MainWindow::on_debug_button_clicked()
 {
     qDebug() << "Debug";
+    //dataSpeicher[0][3] = 0x18;
+    //dataSpeicher[1][3] = 0x18;
+    //qDebug() << (int) getStatus(0xff);
+    //refresh_GUI();
+
+    wdt = 5.7436;
+    gui_set_wdt_Label();
+
 }
 
 
@@ -445,6 +448,77 @@ void MainWindow::fillBox() {
     }
 }
 
+void MainWindow::refreshDataSpeicher() {
+    //gui_set_dataSpeicher_table(i, j, dataSpeicher[][j])
+
+    int wert;
+    //string sWert;
+    //stringstream stream;
+    for(int i = 0; i < 32; i++) {
+        for(int j = 0; j < 8; j++) {
+
+            //stream.str("");
+            //stream.clear();
+
+            if(i < 16) {
+                // berechnung der register pro zelle mit hilfe der zeile
+                wert = dataSpeicher[0][(8*i) + j];
+                gui_set_dataSpeicher_table(i, j, toHexString(wert));
+            } else {
+                // berechnung der register pro zelle mit hilfe der zeile, für bank 2 wieder zurückgesetzt auf den start = 0
+                wert = dataSpeicher[1][(8*(i-16)) + j];
+                gui_set_dataSpeicher_table(i, j, toHexString(wert));
+            }
+        }
+    }
+}
+
+void MainWindow::refresh_GUI(){
+    //qDebug() << "refresh GUI";
+    gui_check_wdt_aktiv();
+    gui_set_quarzfrequenz_Label();
+    gui_set_progTime_Label();
+    gui_set_laufzeit_Label();
+    gui_set_wReg_Label();
+    gui_set_fsr_Label();
+    gui_set_pcl_Label();
+    gui_set_pcLath_Label();
+    gui_set_status_Label();
+    gui_set_pc_Label();
+    gui_set_stackpointer_Label();
+    gui_set_stack_elements();
+    gui_set_vt_Label();
+    gui_set_wdt_Label();
+    gui_set_irp_Label();
+    gui_set_rp1_Label();
+    gui_set_rp0_Label();
+    gui_set_t0_Label();
+    gui_set_pd_Label();
+    gui_set_z_Label();
+    gui_set_dc_Label();
+    gui_set_c_Label();
+    gui_set_option_Label();
+    gui_set_rbp_Label();
+    gui_set_intedg_Label();
+    gui_set_t0cs_Label();
+    gui_set_t0se_Label();
+    gui_set_psa_Label();
+    gui_set_ps2_Label();
+    gui_set_ps1_Label();
+    gui_set_ps0_Label();
+    gui_set_intcon_Label();
+    gui_set_gie_Label();
+    gui_set_pie_Label();
+    gui_set_t0ie_Label();
+    gui_set_inte_Label();
+    gui_set_rbie_Label();
+    gui_set_t0if_Label();
+    gui_set_intf_Label();
+    gui_set_rbif_Label();
+    fillBox();
+    refreshDataSpeicher();
+    gui_set_wdt_reset_label();
+}
 
 
 

@@ -8,6 +8,58 @@ using namespace std;
 
 void resetPIC() {
 
+    qDebug() << "reset" ;
+
+    // init dataSpeicher
+    /*
+    for (int i = 0; i < 127; i++) {
+        dataSpeicher[0][i] = 0;
+        dataSpeicher[1][i] = 0;
+    }
+    */
+
+    // PD und TO auf 1 bei Power on
+    setPD(1);
+    setTO(1);
+
+    // Bits im Option reg auf 1 setzen
+    dataSpeicher[1][1] = 0xff;
+
+    // init stack
+    /*
+    for (int i = 0; i < 8; i++) {
+        stack[i] = 0;
+    }
+    */
+    // ProgZeiger reset
+    setProgZeiger(0);
+
+    // Stack zeiger reset
+    //stackZeiger = 0;
+
+    // w Reg zurücksetzen
+    //wReg = 0;
+    // Watchdog zurücksetzen
+    wdt = 0;
+    wdtReset = 0;
+    // Interne Vorteiler variable auf basis der PS bits setzen
+    setPreVar(getPS());
+
+    // Takte und Timings reset
+    //quarzTakt = 4;
+    //progTime = 0;
+    //takte = 0;
+    //deltaTime = 0;
+    //progTime_before = 0;
+
+}
+
+void wdtResetPIC() {
+
+    qDebug() << "Wdt reset" ;
+    wdtReset = 1;
+    goLoop = 0;
+
     // init dataSpeicher
     /*
     for (int i = 0; i < 127; i++) {
@@ -33,10 +85,8 @@ void resetPIC() {
     // Stack zeiger reset
     //stackZeiger = 0;
 
-    // w Reg zurücksetzen
+    // w Reg zur?cksetzen
     //wReg = 0;
-    // Watchdog zurücksetzen
-    wdt = 0;
     // Interne Vorteiler variable auf basis der PS bits setzen
     setPreVar(getPS());
 
@@ -94,7 +144,8 @@ void bootPIC() {
     wReg = 0x00;
     // Watchdog zurücksetzen
     wdt = 0;
-    wdtActive = 0;
+    wdtActive = 1;
+    wdtReset = 0;
     // Interne Vorteiler variable auf basis der PS bits setzen
     setPreVar(getPS());
 

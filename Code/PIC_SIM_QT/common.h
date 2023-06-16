@@ -8,7 +8,7 @@
 
 using namespace std;
 
-extern int test;
+extern int goLoop;
 
 // Programmpfad
 extern string filename;
@@ -26,6 +26,7 @@ extern int matchZeile[1024];
 extern uint8_t wReg;
 
 extern double wdt; //Watchdog
+extern int wdtReset;
 extern int wdtActive;
 extern int pre; //  prescaler/vorteiler
 

@@ -25,12 +25,12 @@ public slots:
 
 
 
-
+    // Umwandlung
     QString to_QString(int);
+    QString string_to_QString(std::string input);
 
     //Box:Konsole
     void gui_set_Console_field(std::string ConsoleOutput);
-    void fillBox();
 
     //Box:Register
     void gui_set_dataSpeicher_table(int row, int column, std::string dataSpeicherOutput);
@@ -51,52 +51,58 @@ public slots:
 
 
     //Box:sichtbar
-    void gui_set_wReg_Label(int wReg);
-    void gui_set_fsr_Label( int fsr);
-    void gui_set_pcl_Label(int pcl);
-    void gui_set_pcLath_Label(int pcLath);
-    void gui_set_status_Label(int status);
+    void gui_set_wReg_Label();
+    void gui_set_fsr_Label();
+    void gui_set_pcl_Label();
+    void gui_set_pcLath_Label();
+    void gui_set_status_Label();
 
     //Box:unsichtbar
-    void gui_set_pc_Label(int pc);
-    void gui_set_stackpointer_Label(int stackpointer);
-    void gui_set_vt_Label(int vt);
-    void gui_set_wdt_Label(int wdt);
+    void gui_set_pc_Label();
+    void gui_set_stackpointer_Label();
+    void gui_set_vt_Label();
+    void gui_set_wdt_Label();
     void gui_check_wdt_aktiv();
 
     //Box 1 unten links
-    void gui_set_irp_Label(int irp);
-    void gui_set_rp1_Label(int rp1);
-    void gui_set_rp0_Label(int rp0);
-    void gui_set_t0_Label(int t0);
-    void gui_set_pd_Label(int pd);
-    void gui_set_z_Label(int z);
-    void gui_set_dc_Label(int dc);
-    void gui_set_c_Label(int c);
+    void gui_set_irp_Label();
+    void gui_set_rp1_Label();
+    void gui_set_rp0_Label();
+    void gui_set_t0_Label();
+    void gui_set_pd_Label();
+    void gui_set_z_Label();
+    void gui_set_dc_Label();
+    void gui_set_c_Label();
 
-    void gui_set_option_Label(int option);
+    void gui_set_option_Label();
 
     // Box 2 unten links
-    void gui_set_rbp_Label(int rbp);
-    void gui_set_intedg_Label(int intedg);
-    void gui_set_t0cs_Label(int t0cs);
-    void gui_set_t0se_Label(int t0se);
-    void gui_set_psa_Label(int psa);
-    void gui_set_ps2_Label(int ps2);
-    void gui_set_ps1_Label(int ps1);
-    void gui_set_ps0_Label(int ps0);
+    void gui_set_rbp_Label();
+    void gui_set_intedg_Label();
+    void gui_set_t0cs_Label();
+    void gui_set_t0se_Label();
+    void gui_set_psa_Label();
+    void gui_set_ps2_Label();
+    void gui_set_ps1_Label();
+    void gui_set_ps0_Label();
 
-    void gui_set_intcon_Label(int intcon);
+    void gui_set_intcon_Label();
     
     // Box 3 unten links
-    void gui_set_gie_Label(int gie);
-    void gui_set_pie_Label(int pie);
-    void gui_set_t0ie_Label(int t0ie);
-    void gui_set_inte_Label(int inte);
-    void gui_set_rbie_Label(int rbie);
-    void gui_set_t0if_Label(int t0if);
-    void gui_set_intf_Label(int intf);
-    void gui_set_rbif_Label(int rbif);
+    void gui_set_gie_Label();
+    void gui_set_pie_Label();
+    void gui_set_t0ie_Label();
+    void gui_set_inte_Label();
+    void gui_set_rbie_Label();
+    void gui_set_t0if_Label();
+    void gui_set_intf_Label();
+    void gui_set_rbif_Label();
+
+    // wdt label
+    void gui_set_wdt_reset_label();
+
+    // Stack elemente
+    void gui_set_stack_elements();
 
     //Menüband
     void on_actionLaden_triggered();
@@ -112,6 +118,12 @@ public slots:
 
     void on_reset_laufzeit_button_clicked();
 
+    // RefreshGUI functions
+    void refresh_GUI();
+    void fillBox();
+    void refreshDataSpeicher();
+
+
 
 private slots:
     //void on_pushButton_clicked();
@@ -119,6 +131,8 @@ private slots:
 
 
 
+
+    void on_checkBox_stateChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;

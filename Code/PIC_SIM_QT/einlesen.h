@@ -3,6 +3,7 @@
 using namespace std;
 
 void resetPIC();
+void wdtResetPIC();
 void bootPIC();
 
 void einlesen(string filename);
