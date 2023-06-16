@@ -13,14 +13,12 @@ std::string doubleToString(double wert) {
     stream << wert;
     sWert = stream.str();
 
-    qDebug() << "double wert als string: " << sWert;
-
     return sWert;
 
 
 }
 
-std::string toHexString(uint8_t wert) {
+std::string toHexString(int wert) {
 
     string sWert;
     stringstream stream;
@@ -77,18 +75,7 @@ void setRegInhalt(uint8_t pfad, uint8_t result) {
 	}
 
 
-
-    // Prüfe ob prescaler bits verändert wurden und setze falls ja
-	if (f == 1 && getRP0() == 1) {
-
-        // aktuell gespeicherter wert des option registers abrufen
-        curInhalt = dataSpeicher[1][f];
-
-		if ((curInhalt & 0x03) != (result & 0x03)) {
-			setPreVar((result & 0x03));
-		}
-    }
-
+    // bei mschreiben in timer0 wird vorteiler zurückgesetzt
     if (f == 1 && getRP0() == 0) {
 
         setPreVar(getPS());
@@ -100,10 +87,18 @@ void setRegInhalt(uint8_t pfad, uint8_t result) {
         dataSpeicher[1][f] = result;
     } else if (f < 64 && f >= 0) {
 
+        // altes option reg für  den kommenden vergleich
+        curInhalt = dataSpeicher[1][1];
         // Speichere neuen wert im register
         dataSpeicher[bank][f] = 0;
         dataSpeicher[bank][f] = result;
 
+        // Prüfe ob prescaler bits verändert wurden und setze falls ja
+        if (f == 1 && getRP0() == 1) {
+            if ((curInhalt & 0x03) != (dataSpeicher[1][1] & 0x03)) {
+                setPreVar((result & 0x03));
+            }
+        }
     }
     else {
         // kein speichern, wenn auf adresse > 63 zugegriffen wird
@@ -125,6 +120,8 @@ void syncDataSpeicher() {
 
 	// sync fsr
 	dataSpeicher[!getRP0()][4] = dataSpeicher[getRP0()][4];
+
+    dataSpeicher[!getRP0()][0x0B] = dataSpeicher[getRP0()][0x0B];
 
 	// sync anwendungsbereich
 	for (int i = 12; i < 64; i++) {
@@ -276,8 +273,11 @@ int getINTCON(uint8_t maske) {
 	// lese intcon aus dem aktuellen Datenspeicher (da status in beiden Bänken gleich eigentlich unnötig)
 	uint8_t reg = dataSpeicher[getRP0()][0x0B];
 
-	return ((reg & maske) > 0);
-
+    if(maske == 0xff) {
+        return reg;
+    } else {
+        return ((reg & maske) > 0);
+    }
 }
 
 void setINTCON(uint8_t maske, int wert) {
@@ -330,7 +330,7 @@ void setPreVar(int wert) {
 		case 7: pre = 128; break;
 		default: break;
 		}
-	}
+	}   
 }
 
 int getINTEDG() {

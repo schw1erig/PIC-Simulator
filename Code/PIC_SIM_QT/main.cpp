@@ -37,10 +37,10 @@ int maxZeilen;
 int progZeiger;
 int stackZeiger;
 
-int quarzTakt;  // in MHZ
-int progTime; // in Micro-Sekunden
-int deltaTime; // in micro-sekunden
-int progTime_before; // in micro-sekunden
+double quarzTakt;  // in MHZ
+double progTime; // in Micro-Sekunden
+double deltaTime; // in micro-sekunden
+double progTime_before; // in micro-sekunden
 int takte;
 
 uint8_t maskeC = 0x0001;

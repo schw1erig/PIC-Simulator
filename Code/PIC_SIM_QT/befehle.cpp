@@ -105,9 +105,6 @@ void decode(int data) {
 
 }
 
-
-
-
 // BYTE-ORIENTED FILE REGISTER OPERATIONS
 void addwf(int data) {
 	cout << "addwf aufgerufen\n";
@@ -134,7 +131,7 @@ void addwf(int data) {
 	if (result > 255) {
 		// Setzt das Carry-Flag basierend auf dem Ergebnis
 		c = 1;
-		result -= 255;
+        result -= 256;
 	}
 	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
@@ -229,10 +226,9 @@ void comf(int data) {
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = getRegInhalt(f); // Register f Inhalt
 
-	int z;
-
 	uint8_t result = ~reg; //Bilde Complement
-	z = (result == 0);
+
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -244,7 +240,7 @@ void comf(int data) {
 	{
 		wReg = result;  
 	}
-	setZ(z);
+    setZ(z);
 
 }
 
@@ -259,7 +255,7 @@ void decf (int data) {
 
     uint8_t result = reg-1;
 
-	int z = (result == 0);
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -271,7 +267,7 @@ void decf (int data) {
 		wReg = result;   
 	}
 
-	setZ(z);
+    setZ(z);
 }
 
 void decfsz(int data) {
@@ -297,6 +293,8 @@ void decfsz(int data) {
 
     if (result == 0) {
         progZeiger++;
+        setTimer();
+        checkWatchdog();
         nop();
     }
 
@@ -314,7 +312,7 @@ void incf(int data) {
 
     uint8_t result = reg+1;
 
-	int z = (result == 0);
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -326,7 +324,7 @@ void incf(int data) {
 		wReg = result;   
 	}
 
-	setZ(z);
+    setZ(z);
 }
 
 void incfsz(int data) {
@@ -355,6 +353,8 @@ void incfsz(int data) {
 
     if (result == 0) {
         progZeiger++;
+        setTimer();
+        checkWatchdog();
         nop();
     }
 
@@ -378,7 +378,7 @@ void iorwf(int data) {
 
 	uint8_t result = wReg | reg;
 
-	int z = (result == 0);
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -389,7 +389,7 @@ void iorwf(int data) {
 		wReg = result;   
 	}
 
-	setZ(z);
+    setZ(z);
 
 }
 
@@ -410,7 +410,7 @@ void movf(int data) {
 	uint8_t reg = getRegInhalt(f); // Register f Inhalt
 	uint8_t result = reg;
 
-	int z = 1;
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -421,7 +421,7 @@ void movf(int data) {
 		wReg = result;   // speichere wert von Ref in WReg
 	}
 
-	setZ(z);
+    setZ(z);
 
 }
 
@@ -432,9 +432,8 @@ void movwf(int data) {
 
 	uint8_t f = 0x007f & data; // Register Pfad
 	uint8_t reg = getRegInhalt(f);
-	uint8_t result = wReg;
 
-	setRegInhalt(f, (uint8_t)result);
+    setRegInhalt(f, wReg);
 
 }
 
@@ -442,16 +441,6 @@ void nop() {
     cout << "nop aufgerufen\n";
 
 	//timer erhöhen
-    if (getT0CS() == 0) {
-		// erhöhe Timer
-		dataSpeicher[0][1]++;
-		if (dataSpeicher[0][1] == 0) {
-			setT0IF(1);
-		}
-	}
-
-    checkWatchdog();
-
     takte += 4;
 }
 
@@ -540,17 +529,17 @@ void subwf(int data) {
 	// DC: bei add: > 15 -> dc = 1, <= 15 -> dc = 0 ; sub: < 0 -> dc = 1, >= 0 -> dc  0
 
 	if ( ((reg & 0x0f) - (wReg & 0x0f)) < 0) {
-		dc = 1; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
+        dc = 0; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
 	}
 
 	// Berechnung
-	result = reg - wReg;   // subtrahiere wert im register f von wREG 
-
+    result = reg - wReg;   // subtrahiere wert im register f von wREG
+    qDebug() << "wReg: " << wReg << "Result: " << result;
 	// Flags festlegen
 	if (result < 0) {
 		// Setzt das Carry-Flag basierend auf dem Ergebnis
 		c = 0; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
-		result += 255;
+        result += 256;
 	}
 	else {
 		c = 1;
@@ -615,7 +604,8 @@ void xorwf(int data) {
 
 	result = wReg ^ reg;
 
-	
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
+
 	// Speicherort ermittlen
 	if (d == 1)   // Wenn d = 1, wird das Ergebnis in das Register geschrieben
 	{
@@ -626,7 +616,7 @@ void xorwf(int data) {
 		wReg = result;
 	}
 
-	setZ(1);
+    setZ(z);
 
 }
 
@@ -678,17 +668,20 @@ void btfsc(int data) {
 	// Testet Bit b an Adr. f und springt, wenn es 0 ist
 
 	uint8_t f = 0x007f & data; // Register Pfad
-	uint8_t b = 0x0380 & data;
+    int b = 0x0380 & data;
 	uint8_t reg = getRegInhalt(f);
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
-
+    b = (1u << b);
+    //qDebug() << "b" << b << "reg" << Qt::hex << reg << "verundung: " << Qt::hex << ((reg & b) > 0);
 	if ((reg & b) > 0) {
 		// bit b in reg an stelle f = 1 -> do nothing + next befehl
 	}
 	else {
 		// bit b in reg an stelle f = 0, führe nop() aus und überspringe den nächsten befehl
         setProgZeiger(progZeiger+1);
+        setTimer();
+        checkWatchdog();
 		nop();
 	}
 
@@ -699,17 +692,20 @@ void btfsc(int data) {
 void btfss(int data) {
 	cout << "btfss aufgerufen\n";
 	uint8_t f = 0x007f & data; // Register Pfad
-	uint8_t b = 0x0380 & data;
+    int b = 0x0380 & data;
 	uint8_t reg = getRegInhalt(f);
 
 	b = b >> 7; // shiften der bits nach ganz rechts um die korrekte zahl zu erhalten
-
+    b = (1u << b);
+    //qDebug() << "b" << b << "reg" << Qt::hex << reg << "verundung: " << Qt::hex << ((reg & b) > 0);
 	if ((reg & b) == 0) {
 		// bit b in f = 0-> do nothing + next befehl
 	}
 	else {
 		// bit b in f = 1, führe nop() aus und überspringe den nächsten befehl
         setProgZeiger(progZeiger+1);
+        setTimer();
+        checkWatchdog();
 		nop();
 	}
 
@@ -743,7 +739,7 @@ void addlw(int data) {
 	if (result > 255) {
 		// Setzt das Carry-Flag basierend auf dem Ergebnis
 		c = 1;
-		result -= 255;
+        result -= 256;
 	}
 
 	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
@@ -832,14 +828,8 @@ void call(int data) {
 
     takte += 4;
 
-    // Timer erhöhen falls T0CS 0 da doppelte befehlslaufzeit
-    if (getT0CS() == 0) {
-		// erhöhe Timer
-		dataSpeicher[0][1]++;
-		if (dataSpeicher[0][1] == 0) {
-			setT0IF(1);
-		}
-	}
+    // set Timer
+    setTimer();
 
     checkWatchdog();
 
@@ -915,14 +905,8 @@ void picGoto(int data) {
 
     takte += 4;
 
-	// Timer erhöhen da doppelte befehlslaufzeit
-    if (getT0CS() == 0) {
-		// erhöhe Timer
-		dataSpeicher[0][1]++;
-		if (dataSpeicher[0][1] == 0) {
-			setT0IF(1);
-		}
-	}
+    // set Timer
+    setTimer();
 
     checkWatchdog();
 
@@ -940,14 +924,13 @@ void iorlw(int data) {
 	// Führe verorderung durch
 	uint8_t result = wReg | k;
 
-	// Bestimme z auf basis des ergebniss 
-	int z = (result == 0);
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	// Schreibe in wReg
 	wReg = result;
 	
 	// Setze Flags
-	setZ(z);
+    setZ(z);
 
 	// Erhöhe Takte
 	takte += 4;
@@ -977,14 +960,8 @@ void retfie(int data) {
 
     takte += 4;
 
-	// Timer erhöhen da doppelte befehlslaufzeit
-    if (getT0CS() == 0) {
-		// erhöhe Timer
-		dataSpeicher[0][1]++;
-		if (dataSpeicher[0][1] == 0) {
-			setT0IF(1);
-		}
-	}
+    // set Timer
+    setTimer();
 
     checkWatchdog();
 
@@ -1017,14 +994,8 @@ void retlw(int data) {
 
     takte += 4;
 
-	// Timer erhöhen da doppelte befehlslaufzeit
-    if (getT0CS() == 0) {
-		// erhöhe Timer
-		dataSpeicher[0][1]++;
-		if (dataSpeicher[0][1] == 0) {
-			setT0IF(1);
-		}
-	}
+    // set Timer
+    setTimer();
 
     checkWatchdog();
 
@@ -1047,14 +1018,8 @@ void picReturn(int data) {
 
     takte += 4;
 
-	// Timer erhöhen da doppelte befehlslaufzeit
-    if (getT0CS() == 0) {
-		// erhöhe Timer
-		dataSpeicher[0][1]++;
-		if (dataSpeicher[0][1] == 0) {
-			setT0IF(1);
-		}
-	}
+    // set Timer
+    setTimer();
 
     checkWatchdog();
 
@@ -1107,7 +1072,7 @@ void sublw(int data) {
 	if (result < 0) {
 		// Setzt das Carry-Flag basierend auf dem Ergebnis
 		c = 0; // durch "fehler" im PIC eigentlich falsch, müsste = 1 sein
-		result += 255;
+        result += 256;
 	}
 
 	z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
@@ -1134,13 +1099,14 @@ void xorlw(int data) {
 	// Ergebniss ermitteln
 	uint8_t result = wReg ^ k;
 
+    int z = (result == 0);   // Setzt das Zero-Flag basierend auf dem Ergebnis
 
 	// Speichern im wReg
 	wReg = result;
 	
 
 	// Flags setzen
-	setZ(1);
+    setZ(z);
 
 	// Takte erhöhen
 	takte += 4;
@@ -1161,8 +1127,6 @@ void execBefehl() {
 	
 	syncDataSpeicher();
 
-	// vorherige Laufzeit speichern,
-	progTime_before = progTime;
 	//aktuelle Laufzeit bestimmen
     progTime = (takte / quarzTakt); // progTime in mikrosekunden
 
@@ -1170,9 +1134,6 @@ void execBefehl() {
 
 	setTimer();
 	ckeckInterrupt();
-	// GUI aktualisieren
-	// refreshGUI();
-
 }
 
 int popStack() {
@@ -1243,6 +1204,7 @@ void ckeckInterrupt() {
 
 void setTimer() {
 
+    /*
 	//quelle für timer(option->clock source)
     if (getT0CS() == 0) {
 		// erhöhe Timer
@@ -1280,6 +1242,29 @@ void setTimer() {
 			}
 		}
 	}
+*/
+    if (getPSA() == 0) {
+        // vorteiller an timer, erhöhe vorteiler(als 	rückwärtszähler)
+        if (pre > 1) {
+            pre--;
+        }
+        else {
+            // erhöhe Timer wenn pre == 0
+            dataSpeicher[0][1]++;
+            if (dataSpeicher[0][1] == 0) {
+                setT0IF(1);
+            }
+            // setze prescaler zurück
+            setPreVar(getPS());
+        }
+    } else {
+        // vorteiller NICHT an timer
+        // erhöhe Timer wenn pre == 0
+        dataSpeicher[0][1]++;
+        if (dataSpeicher[0][1] == 0) {
+            setT0IF(1);
+        }
+    }
 }
 
 void checkWatchdog() {
@@ -1287,7 +1272,7 @@ void checkWatchdog() {
     if (wdtActive) {
         if (getPSA() == 1) {
             //vorteiler bei watchdog
-            if (pre != 0) {
+            if (pre > 1) {
                 // Preskaler nicht abgelaufen
                 //erhöhe vorteiler(als 	rückwärtszähler)
                 pre--;

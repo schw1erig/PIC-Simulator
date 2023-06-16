@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-std::string toHexString(uint8_t wert);
+std::string toHexString(int wert);
 
 std::string doubleToString(double wert);
 

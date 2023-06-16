@@ -10,20 +10,16 @@ void resetPIC() {
 
     qDebug() << "reset" ;
 
-    // init dataSpeicher
-    /*
-    for (int i = 0; i < 127; i++) {
-        dataSpeicher[0][i] = 0;
-        dataSpeicher[1][i] = 0;
-    }
-    */
-
     // PD und TO auf 1 bei Power on
     setPD(1);
     setTO(1);
 
     // Bits im Option reg auf 1 setzen
     dataSpeicher[1][1] = 0xff;
+
+    // Bits im Intcon reg auf 0 setzen
+    dataSpeicher[0][0x0B] = 0x00;
+    dataSpeicher[1][0x0B] = 0x00;
 
     // init stack
     /*
@@ -73,6 +69,10 @@ void wdtResetPIC() {
     // Bits im Option reg auf 1 setzen
     dataSpeicher[1][1] = 0xff;
 
+    // Bits im Intcon reg auf 0 setzen
+    dataSpeicher[0][0x0B] = 0x00;
+    dataSpeicher[1][0x0B] = 0x00;
+
     // init stack
     /*
     for (int i = 0; i < 8; i++) {
@@ -88,19 +88,14 @@ void wdtResetPIC() {
     // w Reg zur?cksetzen
     //wReg = 0;
     // Interne Vorteiler variable auf basis der PS bits setzen
-    setPreVar(getPS());
 
-    // Takte und Timings reset
-    //quarzTakt = 4;
-    //progTime = 0;
-    //takte = 0;
-    //deltaTime = 0;
-    //progTime_before = 0;
+    setPreVar(getPS());
 
 }
 
 void bootPIC() {
 
+    qDebug() << "boot aufgerufen";
     // init dataSpeicher
     for (int i = 0; i < 127; i++) {
         dataSpeicher[0][i] = 0x00;
@@ -136,6 +131,10 @@ void bootPIC() {
     // Bits im Option reg auf 1 setzen
     dataSpeicher[1][1] = 0xff;
 
+    // Bits im Intcon reg auf 0 setzen
+    dataSpeicher[0][0x0B] = 0x00;
+    dataSpeicher[1][0x0B] = 0x00;
+
     // PD und TO auf 1 bei Power on
     setPD(1);
     setTO(1);
@@ -150,7 +149,7 @@ void bootPIC() {
     setPreVar(getPS());
 
     // Takte und Timings reset
-    quarzTakt = 4;
+    quarzTakt = 4.0000;
     progTime = 0;
     takte = 0;
     deltaTime = 0;

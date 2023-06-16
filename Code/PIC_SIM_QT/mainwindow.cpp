@@ -79,7 +79,8 @@ void MainWindow::gui_set_pin_table(int row, int column, std::string PinTableChan
 
 void MainWindow::gui_set_quarzfrequenz_Label()
 {
-    ui->quarzfrequenz_Label->setText(to_QString(quarzTakt));
+    string sQuarzTakt = doubleToString(quarzTakt);
+    ui->quarzfrequenz_Label->setText(string_to_QString(sQuarzTakt));
 }
 
 void MainWindow::gui_set_progTime_Label()
@@ -89,7 +90,8 @@ void MainWindow::gui_set_progTime_Label()
 
 void MainWindow::gui_set_laufzeit_Label()
 {
-    ui->laufzeit_Label->setText(to_QString(progTime));
+    string sProgTime = doubleToString(progTime);
+    ui->laufzeit_Label->setText(string_to_QString(sProgTime));
 }
 
 void MainWindow::gui_set_wReg_Label()
@@ -99,17 +101,17 @@ void MainWindow::gui_set_wReg_Label()
 
 void MainWindow::gui_set_fsr_Label()
 {
-    ui->fsr_Label->setText(to_QString(getFSR()));
+    ui->fsr_Label->setText(string_to_QString(toHexString(getFSR())));
 }
 
 void MainWindow::gui_set_pcl_Label()
 {
-    ui->pcl_Label->setText(to_QString(getPCL()));
+    ui->pcl_Label->setText(string_to_QString(toHexString(getPCL())));
 }
 
 void MainWindow::gui_set_pcLath_Label()
 {
-    ui->pcLath_Label->setText(to_QString(getPCLATH()));
+    ui->pcLath_Label->setText(string_to_QString(toHexString(getPCLATH())));
 }
 
 void MainWindow::gui_set_status_Label()
@@ -120,7 +122,8 @@ void MainWindow::gui_set_status_Label()
 
 void MainWindow::gui_set_pc_Label()
 {
-    ui->pc_Label->setText(to_QString(progZeiger));
+    ui->pc_Label->setText(string_to_QString(toHexString(progZeiger)));
+
 }
 
 void MainWindow::gui_set_stackpointer_Label()
@@ -265,7 +268,7 @@ void MainWindow::gui_set_ps0_Label()
 
 void MainWindow::gui_set_intcon_Label()
 {
-    ui->intcon_Label->setText(to_QString(getINTCON(0xff)));
+    ui->intcon_Label->setText(string_to_QString(toHexString(getINTCON(0xff))));
 }
 
 void MainWindow::gui_set_gie_Label()
@@ -285,7 +288,7 @@ void MainWindow::gui_set_t0ie_Label()
 
 void MainWindow::gui_set_inte_Label()
 {
-    ui->inte_Label->setText(to_QString(getT0IE()));
+    ui->inte_Label->setText(to_QString(getINTE()));
 }
 
 void MainWindow::gui_set_rbie_Label()
@@ -318,6 +321,10 @@ void MainWindow::gui_set_wdt_reset_label()
 
 }
 
+void MainWindow::gui_set_pfad_Label()
+{
+    ui->pfad_label->setText(string_to_QString(filename));
+}
 
 void MainWindow::gui_set_Console_field2(QString file_name)
 {
@@ -337,11 +344,12 @@ void MainWindow::on_actionLaden_triggered()
     filename = file_name.toStdString();
     qDebug() << filename;
 
+    //dataSpeicher[1][1] = 0xff;
     bootPIC();
     einlesen(filename);
     fileAusgeben();
     extractBefehle();
-    fillBox();
+    refresh_GUI();
 
 }
 
@@ -363,7 +371,7 @@ void MainWindow::gui_pin_table_checkbox(int row, int column)
 }
 
 //----------------------------------
-//Buttons und fillGui funktionen:
+//Buttons, Events und fillGui funktionen:
 void MainWindow::on_next_button_clicked()
 {
     qDebug() << "next clicked" ;
@@ -413,19 +421,28 @@ void MainWindow::on_debug_button_clicked()
     //dataSpeicher[1][3] = 0x18;
     //qDebug() << (int) getStatus(0xff);
     //refresh_GUI();
-
-    wdt = 5.7436;
-    gui_set_wdt_Label();
-
+    //gui_set_quarzfrequenz_Label();
+    bootPIC();
+    refresh_GUI();
+    progZeiger = 0x100;
+    gui_set_pc_Label();
 }
-
 
 
 
 void MainWindow::on_reset_laufzeit_button_clicked()
 {
     progTime = 0;
+    takte = 0;
     gui_set_laufzeit_Label();
+    refresh_GUI();
+}
+
+void MainWindow::on_quarzfrequenz_input_textChanged(const QString &arg1)
+{
+    double wert = arg1.toDouble();
+    quarzTakt = wert;
+    gui_set_quarzfrequenz_Label();
 }
 
 //-----------
@@ -515,9 +532,13 @@ void MainWindow::refresh_GUI(){
     gui_set_t0if_Label();
     gui_set_intf_Label();
     gui_set_rbif_Label();
+    gui_set_pfad_Label();
     fillBox();
     refreshDataSpeicher();
     gui_set_wdt_reset_label();
+    string sQuarzTakt = doubleToString(quarzTakt);
+    ui->quarzfrequenz_input->setText(string_to_QString(sQuarzTakt));
+
 }
 
 
