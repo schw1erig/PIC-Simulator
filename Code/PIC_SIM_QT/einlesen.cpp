@@ -49,22 +49,10 @@ void wdtResetPIC() {
     dataSpeicher[0][0x0B] = 0x00;
     dataSpeicher[1][0x0B] = 0x00;
 
-    // init stack
-    /*
-    for (int i = 0; i < 8; i++) {
-        stack[i] = 0;
-    }
-    */
     // ProgZeiger reset
     setProgZeiger(0);
 
-    // Stack zeiger reset
-    //stackZeiger = 0;
-
-    // w Reg zur?cksetzen
-    //wReg = 0;
     // Interne Vorteiler variable auf basis der PS bits setzen
-
     setPreVar(getPS());
 
 }
@@ -72,9 +60,6 @@ void wdtResetPIC() {
 void bootPIC() {
 
     qDebug() << "boot aufgerufen";
-
-    dataSpeicher[0][5] = 0xff;
-    dataSpeicher[0][6] = 0xff;
 
     // init dataSpeicher
     for (int i = 0; i < 127; i++) {
@@ -129,6 +114,7 @@ void bootPIC() {
     wdt = 0;
     wdtActive = 1;
     wdtReset = 0;
+
     // Interne Vorteiler variable auf basis der PS bits setzen
     setPreVar(getPS());
 

@@ -81,6 +81,7 @@ void MainWindow::gui_set_quarzfrequenz_Label()
 {
     string sQuarzTakt = doubleToString(quarzTakt);
     ui->quarzfrequenz_Label->setText(string_to_QString(sQuarzTakt));
+    ui->befehlTime_Label->setText(string_to_QString(doubleToString(4/quarzTakt)));
 }
 
 void MainWindow::gui_set_progTime_Label()
@@ -342,11 +343,21 @@ void MainWindow::gui_set_IO()
 {
     int reg = 0;
     for (int i = 1; i < 5; i+=3) {
-       for(int j = 0; j < 8;j++) {
-           if(i==1) reg = 0x05;
-           else reg = 0x06;
+       for(int j = 0; j < 8; j++) {
+           if(i==1) {
+               reg = 0x05;
+           } else {
+               reg = 0x06;
+           }
            if(( dataSpeicher[1][reg] & (1u << (7-j)) ) == 0) {
                ui->pin_table->item(i,j)->setText("o");
+               for(int k = 0; k < 8; k++) {
+                   if(( dataSpeicher[0][reg] & (1u << (7-j)) ) > 0) {
+                       ui->pin_table->item(i+1,j)->setData(Qt::CheckStateRole, Qt::Checked);
+                   } else {
+                       ui->pin_table->item(i+1,j)->setData(Qt::CheckStateRole, Qt::Unchecked);
+                   }
+               }
            }
            else {
                ui->pin_table->item(i,j)->setText("i");
@@ -525,7 +536,7 @@ void MainWindow::on_next_button_clicked()
     //testProgAblauf();
     //gui_check_wdt_aktiv();
     //gui_pin_table_checkbox(2,1);
-    //wdt = 0;
+    ////wdt = 0;
     wdtReset = 0;
     execBefehl();
     refresh_GUI();
@@ -538,8 +549,11 @@ void MainWindow::on_go_button_clicked()
         refresh_GUI();
     } else {
         goLoop = 1;
-        // Watchdog zur�cksetzen
-        wdt = 0;
+
+        // Watchdog zur�cksetzen fallls ein überlauf aufgetreten ist
+        if(wdtReset) {
+            wdt = 0;
+        }
         wdtReset = 0;
     }
 
@@ -574,13 +588,7 @@ void MainWindow::on_debug_button_clicked()
     //progZeiger = 0x100;
     //gui_set_pc_Label();
 
-    dataSpeicher[0][5] = 0x01;
-    dataSpeicher[0][5] = dataSpeicher[0][5] ^ ( 1u << (7-4) ); // setze bit auf gewuenschten wert
-    qDebug() <<  dataSpeicher[0][5];
-
-    //dataSpeicher[0][5] = 0x09;
-    dataSpeicher[0][5] = dataSpeicher[0][5] ^ 1u; // setze bit auf gewuenschten wert
-    qDebug() <<  dataSpeicher[0][5];
+    ui->pin_table->item(2,0)->setData(Qt::CheckStateRole, Qt::Checked);
 
     refresh_GUI();
 
@@ -703,4 +711,11 @@ void MainWindow::refresh_GUI(){
 
 
 
+
+
+void MainWindow::on_skip_button_clicked()
+{
+    setProgZeiger(progZeiger+=1);
+    refresh_GUI();
+}
 

@@ -44,6 +44,8 @@ public slots:
     int gui_get_new_pin_value(int row, int column);
     void pin_action();
     void gui_set_IO();
+    void on_pin_table_itemClicked(QTableWidgetItem *item);
+    void on_pin_table_itemActivated(QTableWidgetItem *item);
 
     //Box:Quarzfrequenz und progTime
     void gui_set_quarzfrequenz_Label();
@@ -124,6 +126,8 @@ public slots:
 
     void on_reset_laufzeit_button_clicked();
 
+    void on_skip_button_clicked();
+
     void on_checkBox_stateChanged(int arg1);
 
     void on_quarzfrequenz_input_textChanged(const QString &arg1);
@@ -134,17 +138,12 @@ public slots:
     void refreshDataSpeicher();
 
 
+
 private slots:
 
 
 
 
-
-
-
-    void on_pin_table_itemClicked(QTableWidgetItem *item);
-
-    void on_pin_table_itemActivated(QTableWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;

@@ -30,7 +30,7 @@ uint8_t wReg;
 double wdt; //Watchdog
 int wdtActive;
 int wdtReset;
-int pre = 0; // Watchdog prescaler
+int pre; // Watchdog prescaler
 
 int maxZeilen;
 
