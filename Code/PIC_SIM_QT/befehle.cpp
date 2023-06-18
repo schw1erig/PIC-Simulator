@@ -11,6 +11,14 @@ void setIOPorts() {
 
 void setProgZeiger(int zeiger) {
 
+    progZeiger = zeiger;
+    // setze pcl entsprechend dem progZeiger
+    setPCL((zeiger & 0x0f));
+    //qDebug() << "PCL: " <<(int) getPCL();
+}
+
+void incProgZeiger(int zeiger) {
+
     // ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
     if (progZeiger < 1024) {
         progZeiger = zeiger;
@@ -20,8 +28,6 @@ void setProgZeiger(int zeiger) {
     // setze pcl entsprechend dem progZeiger
     setPCL((zeiger & 0x0f));
     //qDebug() << "PCL: " <<(int) getPCL();
-
-
 }
 
 //Befehl-Decode
@@ -31,7 +37,7 @@ void decode(int data) {
     //cout << "Decode aufgerufen:\n";
 
     // ProgZeiger erhöhen, falls max von 1024 erreicht, setze auf 0
-    setProgZeiger(progZeiger+1);
+    incProgZeiger(progZeiger+1);
 
 	switch (data & 0xffff) {
 	case	0x0008:	picReturn(data); break;
@@ -144,7 +150,7 @@ void addwf(int data) {
 		if (f == 2) {
 
 			progZeiger = 0;
-			progZeiger |= (uint8_t) result;
+            progZeiger |= (uint8_t) result;
 			int pcLath5Bits = (dataSpeicher[getRP0()][0x0A]) & (0x1f);
 			progZeiger |= (pcLath5Bits << 8);
 		}			
@@ -679,7 +685,7 @@ void btfsc(int data) {
 	}
 	else {
 		// bit b in reg an stelle f = 0, führe nop() aus und überspringe den nächsten befehl
-        setProgZeiger(progZeiger+1);
+        incProgZeiger(progZeiger+1);
         setTimer();
         checkWatchdog();
 		nop();
@@ -703,7 +709,7 @@ void btfss(int data) {
 	}
 	else {
 		// bit b in f = 1, führe nop() aus und überspringe den nächsten befehl
-        setProgZeiger(progZeiger+1);
+        incProgZeiger(progZeiger+1);
         setTimer();
         checkWatchdog();
 		nop();
@@ -793,38 +799,51 @@ void call(int data) {
 
 	// The eleven bit immediate address is loaded into PC bits <10:0>.
     setProgZeiger(k);
-	
-	//The upper bits of the PC are loaded from PCLATH. 
-	
+
+    /*
+    //The upper bits of the PC are loaded from PCLATH.
+    // eigentlich:
+    //int pclath = getPCLATH() & 0x18;
+    int pclath = getPCLATH() & 0x03;
+    // eigentlich:
+    //pclath = pclath << 11;
+    pclath = pclath << 8;
+
+    progZeiger = progZeiger & 0xff;
+    progZeiger = progZeiger | pclath;
+    */
+
+
+
 	int pclath3 = getPCLATH() & 0x08;
 	int pclath4 = getPCLATH() & 0x10;
 
 	if (pclath3 > 0) {
 
-		progZeiger |= (1u << 14);
+        progZeiger |= (1u << 11);
 
 	}
 	else {
 
-		progZeiger &= ~(1u << 14);
-		progZeiger &= 0x1fff;
+        progZeiger &= ~(1u << 11);
+        progZeiger &= 0x1fff;
 
 	}
 
 
 	if (pclath4 > 0) {
 
-		progZeiger |= (1u << 15);
+        progZeiger |= (1u << 12);
 
 	}
 	else {
 
-		progZeiger &= ~(1u << 15);
+        progZeiger &= ~(1u << 12);
 		progZeiger &= 0x1fff;
 
 	}
 
-	cout <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
+    qDebug() <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
 
     takte += 4;
 
@@ -873,6 +892,50 @@ void picGoto(int data) {
 
     setProgZeiger(k);
 
+    //The upper bits of the PC are loaded from PCLATH.
+    /*
+    // eigentlich:
+    //int pclath = getPCLATH() & 0x18;
+    int pclath = getPCLATH() & 0x03;
+    // eigentlich:
+    //pclath = pclath << 11;
+    pclath = pclath << 8;
+
+    progZeiger = progZeiger & 0xff;
+    progZeiger = progZeiger | pclath;
+    */
+
+
+    int pclath3 = getPCLATH() & 0x08;
+    int pclath4 = getPCLATH() & 0x10;
+
+    if (pclath3 > 0) {
+
+        progZeiger |= (1u << 11);
+
+    }
+    else {
+
+        progZeiger &= ~(1u << 11);
+        progZeiger &= 0x1fff;
+
+    }
+
+
+    if (pclath4 > 0) {
+
+        progZeiger |= (1u << 12);
+
+    }
+    else {
+
+        progZeiger &= ~(1u << 12);
+        progZeiger &= 0x1fff;
+
+    }
+
+
+    /*
 	cout << "PCLATH: " << getPCLATH() << "\n";
 
 	int pclath3 = getPCLATH() & 0x08;
@@ -902,6 +965,9 @@ void picGoto(int data) {
 		progZeiger &= 0x1fff;
 
 	}
+
+    */
+
 
     takte += 4;
 
@@ -944,8 +1010,8 @@ void movlw(int data) {
 	uint8_t k = 0xff & data; // Register Pfad
 
 	// kopiere k zu wReg
-	wReg = k;
-
+    wReg = k;
+    qDebug() << "wreg: " << wReg;
 	takte += 4;
 
 }
@@ -954,7 +1020,7 @@ void retfie(int data) {
 	cout << "retfie aufgerufen\n";
 	// Rückkehr aus der Interruptroutine, setzte GIE
 
-	progZeiger = popStack();
+    setProgZeiger(popStack());
 
 	setGIE(1);
 
@@ -990,8 +1056,7 @@ void retlw(int data) {
 
 	wReg = k;
 
-	progZeiger = popStack();
-
+    setProgZeiger(popStack());
     takte += 4;
 
     // set Timer
@@ -1014,7 +1079,7 @@ void picReturn(int data) {
 		is a two cycle instruction.
 	*/
 
-	progZeiger = popStack();
+    setProgZeiger(popStack());
 
     takte += 4;
 

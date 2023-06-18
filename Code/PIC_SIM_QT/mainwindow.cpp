@@ -587,8 +587,19 @@ void MainWindow::on_debug_button_clicked()
     //refresh_GUI();
     //progZeiger = 0x100;
     //gui_set_pc_Label();
+    //ui->pin_table->item(2,0)->setData(Qt::CheckStateRole, Qt::Checked);
 
-    ui->pin_table->item(2,0)->setData(Qt::CheckStateRole, Qt::Checked);
+    progZeiger = 0x09;
+    setPCLATH(0x01);
+    //call(0x00ff);
+
+    int pclath = getPCLATH() & 0x18;
+    qDebug() << pclath;
+    pclath = pclath << 8;
+    qDebug() << pclath;
+    progZeiger = progZeiger & 0xff;
+    progZeiger = progZeiger | pclath;
+    qDebug() << progZeiger;
 
     refresh_GUI();
 
@@ -715,7 +726,7 @@ void MainWindow::refresh_GUI(){
 
 void MainWindow::on_skip_button_clicked()
 {
-    setProgZeiger(progZeiger+=1);
+    incProgZeiger(progZeiger+=1);
     refresh_GUI();
 }
 
