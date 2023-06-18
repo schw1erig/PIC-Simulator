@@ -111,6 +111,10 @@ void bootPIC() {
     // Bits im Option reg auf 1 setzen
     dataSpeicher[1][1] = 0xff;
 
+    // Bits im TRIS reg auf 1 setzen
+    dataSpeicher[1][5] = 0xff;
+    dataSpeicher[1][6] = 0xff;
+
     // Bits im Intcon reg auf 0 setzen
     dataSpeicher[0][0x0B] = 0x00;
     dataSpeicher[1][0x0B] = 0x00;

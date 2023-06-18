@@ -43,6 +43,7 @@ public slots:
     int gui_pin_table_checkbox_compare(int row, int column);
     int gui_get_new_pin_value(int row, int column);
     void pin_action();
+    void gui_set_IO();
 
     //Box:Quarzfrequenz und progTime
     void gui_set_quarzfrequenz_Label();
@@ -50,8 +51,6 @@ public slots:
 
     //Box:Laufzeit
     void gui_set_laufzeit_Label();
-
-    void gui_set_Console_field2(QString file_name);
 
 
     //Box:sichtbar

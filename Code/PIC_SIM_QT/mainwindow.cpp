@@ -135,14 +135,14 @@ void MainWindow::gui_set_stackpointer_Label()
 void MainWindow::gui_set_stack_elements()
 {
 
-    ui->gui_stack0->setText(to_QString(stack[0]));
-    ui->gui_stack1->setText(to_QString(stack[1]));
-    ui->gui_stack2->setText(to_QString(stack[2]));
-    ui->gui_stack3->setText(to_QString(stack[3]));
-    ui->gui_stack4->setText(to_QString(stack[4]));
-    ui->gui_stack5->setText(to_QString(stack[5]));
-    ui->gui_stack6->setText(to_QString(stack[6]));
-    ui->gui_stack7->setText(to_QString(stack[7]));
+    ui->gui_stack0->setText(string_to_QString(toHexString(stack[0])));
+    ui->gui_stack1->setText(string_to_QString(toHexString(stack[1])));
+    ui->gui_stack2->setText(string_to_QString(toHexString(stack[2])));
+    ui->gui_stack3->setText(string_to_QString(toHexString(stack[3])));
+    ui->gui_stack4->setText(string_to_QString(toHexString(stack[4])));
+    ui->gui_stack5->setText(string_to_QString(toHexString(stack[5])));
+    ui->gui_stack6->setText(string_to_QString(toHexString(stack[6])));
+    ui->gui_stack7->setText(string_to_QString(toHexString(stack[7])));
 
 
 }
@@ -338,12 +338,22 @@ void MainWindow::gui_set_laeuft_label()
 }
 
 
-void MainWindow::gui_set_Console_field2(QString file_name)
+void MainWindow::gui_set_IO()
 {
+    int reg = 0;
+    for (int i = 1; i < 5; i+=3) {
+       for(int j = 0; j < 8;j++) {
+           if(i==1) reg = 0x05;
+           else reg = 0x06;
+           if(( dataSpeicher[1][reg] & (1u << (7-j)) ) == 0) {
+               ui->pin_table->item(i,j)->setText("o");
+           }
+           else {
+               ui->pin_table->item(i,j)->setText("i");
+           }
+       }
+    }
 
-    ui->Console_Field->moveCursor(QTextCursor::End);
-    ui->Console_Field->insertPlainText("\n");
-    ui->Console_Field->insertPlainText(file_name);
 }
 
 void MainWindow::on_actionLaden_triggered()
@@ -434,15 +444,13 @@ void MainWindow::pin_action() {
     int newValue;
     int oldValue;
     int reg;
-    int fallFlanke;
+    int fallFlanke = -1;
 
     for (int i = 2; i < 6; i+=3) {
         for(int j = 0; j < 8; j++){
-
+            fallFlanke = -1;
+            reg = 0;
             newValue = gui_get_new_pin_value(i, j);
-            oldValue = ( dataSpeicher[0][reg] & (1u << (7-j)) ) > 0 ;
-
-            qDebug() << i << " " << j << "old: " << oldValue<< "new: " << newValue;
 
             if(i == 2) {
                 reg = 0x05;
@@ -450,19 +458,20 @@ void MainWindow::pin_action() {
                 reg = 0x06;
             }
 
+            oldValue = ( dataSpeicher[0][reg] & (1u << (7-j)) ) > 0 ;
+            qDebug() << i << " " << j << "old: " << oldValue<< "new: " << newValue;
+
             if(newValue != oldValue) {
 
                 fallFlanke = getFlanke(oldValue, newValue);
 
                 // setze neuen wert im register
-                if(j == 0) {
+                if(j == 7) {
                     dataSpeicher[0][reg] = dataSpeicher[0][reg] ^ 1u; // setze bit auf gewuenschten wert
                 } else {
                     dataSpeicher[0][reg] = dataSpeicher[0][reg] ^ ( 1u << (7-j) ); // setze bit auf gewuenschten wert
                 }
-
             }
-
 
             if(i == 2 && j == 3) {
                 if (getT0CS() == 1) {
@@ -478,9 +487,31 @@ void MainWindow::pin_action() {
                     }
                 }
             }
+            qDebug() << fallFlanke;
+            //RB0 pin:
+            if(i == 5 && j == 7) {
+                if(!getINTEDG() && fallFlanke == 1) {
+                    // INTEDG auf 0 definiert fallende Flanke => Interrupt.
+                    qDebug() << "INTEDG 1 und fallende Flanke => interrupt";
+                    setINTF(1);
+                } else if (getINTEDG() && fallFlanke == 0) {
+                    // INTEDG auf 1 und steigende Flanke => Interrupt
+                    qDebug() << "INTEDG 0 und steigende Flanke => interrupt";
+                    setINTF(1);
+                }
+            }
+            if((dataSpeicher[1][reg] & (1u << (7-j)) ) > 0) {
+                if(i == 5 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4)) {
+                    if(fallFlanke == 1 | fallFlanke == 0 ) {
+                        // INTEDG auf 1 definiert fallende Flanke => Interrupt.
+                        qDebug() << "INTEDG 1 und fallende Flanke => interrupt";
+                        setRBIF(1);
+                    }
+                }
+            }
+
         }
     }
-
     qDebug() << "done---------";
 }
 
@@ -504,6 +535,7 @@ void MainWindow::on_go_button_clicked()
 {
     if (goLoop == 1) {
         goLoop = 0;
+        refresh_GUI();
     } else {
         goLoop = 1;
         // Watchdog zur�cksetzen
@@ -661,6 +693,7 @@ void MainWindow::refresh_GUI(){
     gui_set_pfad_Label();
     gui_set_laeuft_label();
     fillBox();
+    gui_set_IO();
     refreshDataSpeicher();
     gui_set_wdt_reset_label();
     string sQuarzTakt = doubleToString(quarzTakt);
