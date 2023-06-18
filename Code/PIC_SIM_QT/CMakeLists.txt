@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
 		regfunc.h
 		test.cpp
 		test.h
+		pins.cpp
+		pins.h
                 PicSim.qrc
         ${TS_FILES}
 )

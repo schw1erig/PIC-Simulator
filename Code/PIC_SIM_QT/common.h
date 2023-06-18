@@ -3,6 +3,7 @@
 #include "einlesen.h"
 #include "test.h"
 #include "regfunc.h"
+#include "pins.h"
 #include <QDebug>
 #include "mainwindow.h"
 

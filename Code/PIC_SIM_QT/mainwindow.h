@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qtablewidget.h"
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QPainter>
@@ -37,8 +38,11 @@ public slots:
     void gui_get_dataSpeicher_table();
 
     //Box:Pins
+    void PIC_incTimer();
     void gui_set_pin_table(int row, int column, std::string PinTableChange);
-    void gui_pin_table_checkbox(int row, int column);
+    int gui_pin_table_checkbox_compare(int row, int column);
+    int gui_get_new_pin_value(int row, int column);
+    void pin_action();
 
     //Box:Quarzfrequenz und progTime
     void gui_set_quarzfrequenz_Label();
@@ -109,6 +113,8 @@ public slots:
 
     //Footer
     void gui_set_pfad_Label();
+    void gui_set_laeuft_label();
+
 
     void on_go_button_clicked();
     void on_reset_Button_clicked();
@@ -129,7 +135,6 @@ public slots:
     void refreshDataSpeicher();
 
 
-
 private slots:
 
 
@@ -137,6 +142,10 @@ private slots:
 
 
 
+
+    void on_pin_table_itemClicked(QTableWidgetItem *item);
+
+    void on_pin_table_itemActivated(QTableWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;

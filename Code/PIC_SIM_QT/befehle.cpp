@@ -1243,6 +1243,14 @@ void setTimer() {
 		}
 	}
 */
+
+    if (getT0CS() == 0) {
+        incTimer();
+    }
+}
+
+void incTimer() {
+
     if (getPSA() == 0) {
         // vorteiller an timer, erhöhe vorteiler(als 	rückwärtszähler)
         if (pre > 1) {

@@ -326,6 +326,18 @@ void MainWindow::gui_set_pfad_Label()
     ui->pfad_label->setText(string_to_QString(filename));
 }
 
+
+void MainWindow::gui_set_laeuft_label()
+{
+    if(goLoop) {
+       ui->laeuft_label->setText(string_to_QString("Läuft"));
+    } else {
+       ui->laeuft_label->setText(string_to_QString(""));
+    }
+
+}
+
+
 void MainWindow::gui_set_Console_field2(QString file_name)
 {
 
@@ -345,7 +357,7 @@ void MainWindow::on_actionLaden_triggered()
     qDebug() << filename;
 
     //dataSpeicher[1][1] = 0xff;
-    bootPIC();
+    resetPIC();
     einlesen(filename);
     fileAusgeben();
     extractBefehle();
@@ -353,22 +365,126 @@ void MainWindow::on_actionLaden_triggered()
 
 }
 
-void MainWindow::gui_pin_table_checkbox(int row, int column)
+int MainWindow::gui_pin_table_checkbox_compare(int row, int column)
 {
+    /*
+    int reg;
+    int oldValue;
+    int newValue;
+
+    if(row == 2) {
+        reg = 0x05;
+    } else {
+        reg = 0x06;
+    }
+
+    oldValue = dataSpeicher[0][reg] & (1u << (7-column));
+
+
     if(ui->pin_table->item(row,column)->checkState())
     {
-        ui->Console_Field->moveCursor(QTextCursor::End);
-        ui->Console_Field->insertPlainText("\n");
-        ui->Console_Field->insertPlainText("is checked");
+       newValue=1;
+       qDebug() << row << " " << column << "checked";
     }
     else
     {
-        ui->Console_Field->moveCursor(QTextCursor::End);
-        ui->Console_Field->insertPlainText("\n");
-        ui->Console_Field->insertPlainText("is unchecked");
-
+        newValue=0;
+        qDebug() << row << " " << column << "unchecked";
     }
+
+    if(newValue == oldValue) {
+        return 0;
+    } else {
+        return 1;
+    } */
+    return 0;
 }
+
+int MainWindow::gui_get_new_pin_value(int row, int column)
+{
+    int newValue;
+
+    if(ui->pin_table->item(row,column)->checkState())
+    {
+        newValue=1;
+        qDebug() << row << " " << column << "checked";
+    }
+    else
+    {
+        newValue=0;
+        qDebug() << row << " " << column << "unchecked";
+    }
+
+    qDebug() << "New get" << newValue;
+
+    return newValue;
+}
+
+
+void MainWindow::on_pin_table_itemClicked(QTableWidgetItem *item)
+{
+
+    pin_action();
+    refresh_GUI();
+    //qDebug() << "done\n";
+}
+
+void MainWindow::pin_action() {
+
+    int newValue;
+    int oldValue;
+    int reg;
+    int fallFlanke;
+
+    for (int i = 2; i < 6; i+=3) {
+        for(int j = 0; j < 8; j++){
+
+            newValue = gui_get_new_pin_value(i, j);
+            oldValue = ( dataSpeicher[0][reg] & (1u << (7-j)) ) > 0 ;
+
+            qDebug() << i << " " << j << "old: " << oldValue<< "new: " << newValue;
+
+            if(i == 2) {
+                reg = 0x05;
+            } else {
+                reg = 0x06;
+            }
+
+            if(newValue != oldValue) {
+
+                fallFlanke = getFlanke(oldValue, newValue);
+
+                // setze neuen wert im register
+                if(j == 0) {
+                    dataSpeicher[0][reg] = dataSpeicher[0][reg] ^ 1u; // setze bit auf gewuenschten wert
+                } else {
+                    dataSpeicher[0][reg] = dataSpeicher[0][reg] ^ ( 1u << (7-j) ); // setze bit auf gewuenschten wert
+                }
+
+            }
+
+
+            if(i == 2 && j == 3) {
+                if (getT0CS() == 1) {
+                    qDebug() << "T0CS 1";
+                    if(getT0SE() && fallFlanke == 1) {
+                        // T0SE auf 1 definiert fallende Flanke => Timer inc.
+                        qDebug() << "T0SE 1 und fallende Flanke => inc Timer";
+                        incTimer();
+                    } else if (!getT0SE() && fallFlanke == 0) {
+                        // TOSE auf 0 und steigende Flanke => Timer inc.
+                        qDebug() << "T0SE 0 und steigende Flanke => inc Timer";
+                        incTimer();
+                    }
+                }
+            }
+        }
+    }
+
+    qDebug() << "done---------";
+}
+
+
 
 //----------------------------------
 //Buttons, Events und fillGui funktionen:
@@ -408,7 +524,6 @@ void MainWindow::on_go_button_clicked()
 void MainWindow::on_reset_Button_clicked()
 {
     qDebug() << "Reset Button";
-    goLoop = 0;
     resetPIC();
     refresh_GUI();
 }
@@ -422,10 +537,21 @@ void MainWindow::on_debug_button_clicked()
     //qDebug() << (int) getStatus(0xff);
     //refresh_GUI();
     //gui_set_quarzfrequenz_Label();
-    bootPIC();
+    //bootPIC();
+    //refresh_GUI();
+    //progZeiger = 0x100;
+    //gui_set_pc_Label();
+
+    dataSpeicher[0][5] = 0x01;
+    dataSpeicher[0][5] = dataSpeicher[0][5] ^ ( 1u << (7-4) ); // setze bit auf gewuenschten wert
+    qDebug() <<  dataSpeicher[0][5];
+
+    //dataSpeicher[0][5] = 0x09;
+    dataSpeicher[0][5] = dataSpeicher[0][5] ^ 1u; // setze bit auf gewuenschten wert
+    qDebug() <<  dataSpeicher[0][5];
+
     refresh_GUI();
-    progZeiger = 0x100;
-    gui_set_pc_Label();
+
 }
 
 
@@ -533,6 +659,7 @@ void MainWindow::refresh_GUI(){
     gui_set_intf_Label();
     gui_set_rbif_Label();
     gui_set_pfad_Label();
+    gui_set_laeuft_label();
     fillBox();
     refreshDataSpeicher();
     gui_set_wdt_reset_label();

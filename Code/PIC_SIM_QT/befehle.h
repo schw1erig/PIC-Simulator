@@ -59,5 +59,6 @@ void pushStack(int wert);
 void ckeckInterrupt();
 
 void setTimer();
+void incTimer();
 
 void checkWatchdog();
