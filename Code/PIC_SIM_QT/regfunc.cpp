@@ -155,11 +155,14 @@ void setPCL(uint8_t wert) {
 
 int getPCLATH() {
 
-	return (int) dataSpeicher[getRP0()][0x0A];
+    qDebug() << "in getPCLATH" << dataSpeicher[0][0x0A];
+    return dataSpeicher[0][0x0A];
 
 }
 
 void setPCLATH(uint8_t wert) {
+
+    qDebug() << "in setPCLATH" << wert;
 
 	dataSpeicher[0][0x0A] = wert;
 	dataSpeicher[1][0x0A] = wert;

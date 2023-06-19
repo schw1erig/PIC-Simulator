@@ -13,7 +13,7 @@ void setProgZeiger(int zeiger) {
 
     progZeiger = zeiger;
     // setze pcl entsprechend dem progZeiger
-    setPCL((zeiger & 0x0f));
+    setPCL((zeiger & 0xff));
     //qDebug() << "PCL: " <<(int) getPCL();
 }
 
@@ -26,7 +26,7 @@ void incProgZeiger(int zeiger) {
         progZeiger = 0;
     }
     // setze pcl entsprechend dem progZeiger
-    setPCL((zeiger & 0x0f));
+    setPCL((zeiger & 0xff));
     //qDebug() << "PCL: " <<(int) getPCL();
 }
 
@@ -788,9 +788,9 @@ void call(int data) {
 	cout << "call aufgerufen\n";
 	// Unterprogrammaufruf an Adresse k
 
-	int k = data & 0x07ff;
+    int k = data & 0x7ff;
 
-	cout << "k: " << k << "\n";
+    qDebug() << "k: " << Qt::hex << k << "\n";
 
 	// First, return address (PC + 1) is pushed onto the stack.
 
@@ -800,20 +800,21 @@ void call(int data) {
 	// The eleven bit immediate address is loaded into PC bits <10:0>.
     setProgZeiger(k);
 
-    /*
+
     //The upper bits of the PC are loaded from PCLATH.
+
+    //int pclath =  getPCLATH() & 0x18;
+    int pclath =  getPCLATH() & 0x18;
+    //qDebug() << "pcllath vor schieben: " << Qt::hex << pclath;
     // eigentlich:
-    //int pclath = getPCLATH() & 0x18;
-    int pclath = getPCLATH() & 0x03;
-    // eigentlich:
-    //pclath = pclath << 11;
     pclath = pclath << 8;
+    //qDebug() << "pcllath nach schieben: " << Qt::hex << pclath;
 
-    progZeiger = progZeiger & 0xff;
+    progZeiger = progZeiger & 0x7ff;
     progZeiger = progZeiger | pclath;
-    */
 
 
+    /* aktuelles!
 
 	int pclath3 = getPCLATH() & 0x08;
 	int pclath4 = getPCLATH() & 0x10;
@@ -842,7 +843,7 @@ void call(int data) {
 		progZeiger &= 0x1fff;
 
 	}
-
+    ende aktuelles */
     qDebug() <<"ProgZeiger nach PCLATH: " << progZeiger << "\n";
 
     takte += 4;
@@ -893,19 +894,18 @@ void picGoto(int data) {
     setProgZeiger(k);
 
     //The upper bits of the PC are loaded from PCLATH.
-    /*
+
+    //int pclath =  getPCLATH() & 0x18;
+    int pclath =  getPCLATH() & 0x18;
+    //qDebug() << "pcllath vor schieben: " << Qt::hex << pclath;
     // eigentlich:
-    //int pclath = getPCLATH() & 0x18;
-    int pclath = getPCLATH() & 0x03;
-    // eigentlich:
-    //pclath = pclath << 11;
     pclath = pclath << 8;
+    //qDebug() << "pcllath nach schieben: " << Qt::hex << pclath;
 
-    progZeiger = progZeiger & 0xff;
+    progZeiger = progZeiger & 0x7ff;
     progZeiger = progZeiger | pclath;
-    */
 
-
+    /*
     int pclath3 = getPCLATH() & 0x08;
     int pclath4 = getPCLATH() & 0x10;
 
@@ -933,7 +933,7 @@ void picGoto(int data) {
         progZeiger &= 0x1fff;
 
     }
-
+    */
 
     /*
 	cout << "PCLATH: " << getPCLATH() << "\n";

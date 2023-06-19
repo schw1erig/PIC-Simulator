@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->Console_Field->setReadOnly(true);
     //fillBox();
+    string sQuarzTakt = doubleToString(quarzTakt);
+    ui->quarzfrequenz_input->setText(string_to_QString(sQuarzTakt));
     refresh_GUI();
 }
 
@@ -536,8 +538,13 @@ void MainWindow::on_next_button_clicked()
     //testProgAblauf();
     //gui_check_wdt_aktiv();
     //gui_pin_table_checkbox(2,1);
-    ////wdt = 0;
-    wdtReset = 0;
+    //wdt = 0;
+    if(wdtReset == 1) {
+        wdt = 0;
+        wdtReset = 0;
+    } else {
+
+    }
     execBefehl();
     refresh_GUI();
 }
@@ -552,7 +559,7 @@ void MainWindow::on_go_button_clicked()
 
         // Watchdog zur�cksetzen fallls ein überlauf aufgetreten ist
         if(wdtReset) {
-            wdt = 0;
+            //wdt = 0;
         }
         wdtReset = 0;
     }
@@ -590,17 +597,20 @@ void MainWindow::on_debug_button_clicked()
     //ui->pin_table->item(2,0)->setData(Qt::CheckStateRole, Qt::Checked);
 
     progZeiger = 0x09;
-    setPCLATH(0x01);
+    //setPCLATH(0x18);
     //call(0x00ff);
 
+    /*
     int pclath = getPCLATH() & 0x18;
     qDebug() << pclath;
     pclath = pclath << 8;
     qDebug() << pclath;
     progZeiger = progZeiger & 0xff;
     progZeiger = progZeiger | pclath;
-    qDebug() << progZeiger;
 
+    */
+    call(0x2109);
+    qDebug() << progZeiger;
     refresh_GUI();
 
 }
@@ -715,8 +725,8 @@ void MainWindow::refresh_GUI(){
     gui_set_IO();
     refreshDataSpeicher();
     gui_set_wdt_reset_label();
-    string sQuarzTakt = doubleToString(quarzTakt);
-    ui->quarzfrequenz_input->setText(string_to_QString(sQuarzTakt));
+    //string sQuarzTakt = doubleToString(quarzTakt);
+    //ui->quarzfrequenz_input->setText(string_to_QString(sQuarzTakt));
 
 }
 
@@ -727,6 +737,9 @@ void MainWindow::refresh_GUI(){
 void MainWindow::on_skip_button_clicked()
 {
     incProgZeiger(progZeiger+=1);
+    if(progSpeicher[progZeiger] == -1) {
+        setProgZeiger(0);
+    }
     refresh_GUI();
 }
 
