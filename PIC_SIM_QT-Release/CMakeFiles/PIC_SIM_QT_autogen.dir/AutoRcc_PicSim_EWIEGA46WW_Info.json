@@ -1,0 +1,22 @@
+{
+	"BUILD_DIR" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/PIC_SIM_QT_autogen",
+	"CMAKE_BINARY_DIR" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release",
+	"CMAKE_CURRENT_BINARY_DIR" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release",
+	"CMAKE_CURRENT_SOURCE_DIR" : "G:/Ausbildung/Git/PIC-Simulator/Code/PIC_SIM_QT",
+	"CMAKE_SOURCE_DIR" : "G:/Ausbildung/Git/PIC-Simulator/Code/PIC_SIM_QT",
+	"INCLUDE_DIR" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/PIC_SIM_QT_autogen/include",
+	"INPUTS" : 
+	[
+		"G:/Ausbildung/Git/PIC-Simulator/Code/PIC_SIM_QT/ressources/circle.png"
+	],
+	"LOCK_FILE" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/PIC_SIM_QT_autogen.dir/AutoRcc_PicSim_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "PicSim" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_PicSim.cpp",
+	"RCC_EXECUTABLE" : "C:/Qt/6.5.0/mingw_64/./bin/rcc.exe",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/PIC_SIM_QT_autogen.dir/AutoRcc_PicSim_EWIEGA46WW_Used.txt",
+	"SOURCE" : "G:/Ausbildung/Git/PIC-Simulator/Code/PIC_SIM_QT/PicSim.qrc",
+	"VERBOSITY" : 0
+}

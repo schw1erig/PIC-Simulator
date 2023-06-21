@@ -1,0 +1,9 @@
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/PIC_SIM_QT.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/edit_cache.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/rebuild_cache.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/list_install_components.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/install.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/install/local.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/install/strip.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/PIC_SIM_QT_autogen_timestamp_deps.dir
+G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release/CMakeFiles/PIC_SIM_QT_autogen.dir

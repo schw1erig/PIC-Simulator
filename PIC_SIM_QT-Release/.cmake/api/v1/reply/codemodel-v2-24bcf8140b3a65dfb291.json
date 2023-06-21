@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-b2209d74a49b4520f483.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "PIC_SIM_QT",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "PIC_SIM_QT::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PIC_SIM_QT-Release-fdd958e9e0668b344a8f.json",
+					"name" : "PIC_SIM_QT",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "PIC_SIM_QT_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PIC_SIM_QT_autogen-Release-e90268d157cbe8cbf7e4.json",
+					"name" : "PIC_SIM_QT_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "PIC_SIM_QT_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PIC_SIM_QT_autogen_timestamp_deps-Release-fd56a0660cbe2e6265d2.json",
+					"name" : "PIC_SIM_QT_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "G:/Ausbildung/Git/PIC-Simulator/Code/build-PIC_SIM_QT-Desktop_Qt_6_5_0_MinGW_64_bit-Release",
+		"source" : "G:/Ausbildung/Git/PIC-Simulator/Code/PIC_SIM_QT"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
