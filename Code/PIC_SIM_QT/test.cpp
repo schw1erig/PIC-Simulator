@@ -2,7 +2,7 @@
 #include "common.h"
 
 using namespace std;
-
+/*
 //connect(this, SIGNAL(connected()), &main, SLOT(doSomething()));
 
 
@@ -37,20 +37,6 @@ void testAddwf() {
 }
 
 
-/*progAblauf::progAblauf(QObject *parent) :
-    QObject(parent)
-{
-    MainWindow* instance = MainWindow::GetInstance();
-    progAblauf* c = new progAblauf();
-    MainWindow::connect(c, SIGNAL(testProgAblauf()), instance , SLOT(fillBox()));
-    call();
-}
-
-void progAblauf::call()
-{
-    emit testProgAblauf();
-}
-*/
 void testProgAblauf() {
 
     // Debug ausgabe des eingelesenen programms
@@ -96,3 +82,5 @@ void testSetPS() {
     cout << getPS() << "\n";
 
 }
+*/
+
